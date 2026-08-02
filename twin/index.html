@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cognitive Twin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: #3a4256; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+  code { background: var(--bg-warm); padding: 2px 7px; border-radius: 5px; font-size: 13px; color: var(--ink); border: 1px solid var(--line); }
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .feature-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px 28px; }
+  .feature-card:hover { border-color: var(--primary); }
+  .feature-card-icon { width: 40px; height: 40px; background: var(--primary-soft); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .feature-card-icon svg { color: var(--primary); }
+  .feature-card h3 { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--ink-muted); line-height: 1.55; }
+  .code-block-wrap { position: relative; }
+  .code-label { position: absolute; top: 16px; right: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .note { background: var(--bg-warm); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; font-size: 15px; color: var(--ink-muted); line-height: 1.6; margin-top: 28px; }
+  .note strong { color: var(--ink); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 100px; font-size: 13px; color: var(--ink-muted); }
+  .tag svg { color: var(--primary); flex-shrink: 0; }
+  .end-mark { text-align: center; margin: 88px 0 0; padding-top: 48px; border-top: 1px solid var(--line); }
+  .end-mark svg { color: var(--primary); opacity: 0.35; }
+  .end-mark p { font-size: 13px; color: var(--ink-faint); margin-top: 14px; letter-spacing: 0.06em; }
+  .scan-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 14px; }
+  .scan-table th { background: var(--bg-warm); padding: 12px 18px; text-align: left; font-size: 11px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .scan-table td { padding: 12px 18px; border-bottom: 1px solid var(--line); color: var(--ink-muted); vertical-align: top; }
+  .scan-table tr:last-child td { border-bottom: none; }
+  .scan-table tr:hover td { background: var(--primary-soft); }
+  .scan-table .twin-domain { font-weight: 600; color: var(--ink); }
+  .scan-table .twin-tools { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .scan-table .twin-tools span { color: var(--primary); }
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 38px; }
+    section h2 { font-size: 30px; }
+    .level { grid-template-columns: 1fr; gap: 8px; }
+    .level-num { font-size: 36px; }
+    .page { padding: 64px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">← kai-systems</a>
+    <div class="hub-links">
+      <a href="../terminal/">Terminal</a>
+      <a href="../os/">OS</a>
+      <a href="../video/">Video</a>
+      <a href="../music/">Music</a>
+      <a href="../chatterbot-tts/">Voice</a>
+      <a href="../trumpet/">Trumpet</a>
+      <a href="./" class="here">Twin</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Systems Architecture</div>
+    <h1>A map of everything. <em>Working.</em></h1>
+    <p class="hero-lede">The cognitive twin scans the filesystem, indexes every tool, maps every project, and sets up the work so it runs without being asked. It's the meta-layer that makes all the other stacks run themselves.</p>
+    <div class="hero-divider">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="16,4 28,11 28,21 16,28 4,21 4,11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+    </div>
+    <svg class="geom geom-tr" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="140,10 265,77 265,203 140,270 15,203 15,77" stroke="currentColor" stroke-width="1.5" fill="none"/><polygon points="140,40 230,95 230,185 140,240 50,185 50,95" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="140" cy="140" r="45" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="140" cy="140" r="80" stroke="currentColor" stroke-width="1"/><line x1="140" y1="60" x2="140" y2="220" stroke="currentColor" stroke-width="0.8"/><line x1="60" y1="140" x2="220" y2="140" stroke="currentColor" stroke-width="0.8"/></svg>
+  </div>
+
+  <section>
+    <div class="section-kicker">01 — The System Scan</div>
+    <h2>What was found.</h2>
+    <p class="section-sub">The filesystem is a working environment. Not a storage dump — a living pipeline. The twin starts by making an honest inventory of what's actually there.</p>
+
+    <table class="scan-table">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Tools &amp; Environment</th>
+          <th>Projects / Memory</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="twin-domain">Music Production</td>
+          <td class="twin-tools">
+            <span>Ableton Live</span> · <span>Pro Tools</span> · <span>MuseScore 4</span> · <span>Max for Live</span> · <span>Vital</span> · <span>iZotope</span> · <span>Native Instruments</span> · <span>EWI</span> · <span>Suno</span> · <span>Udio</span>
+          </td>
+          <td>
+            <code>solokit</code> — jazz solo analysis (456 WJAZD solos)<br>
+            <code>audio-to-score</code> — Demucs → Basic Pitch → music21<br>
+            <code>kais-trumpet-ep</code> · <code>jazzability</code> · <code>better-ireal-book</code>
+          </td>
+        </tr>
+        <tr>
+          <td class="twin-domain">AI Audio</td>
+          <td class="twin-tools">
+            <span>faster-whisper</span> · <span>librosa</span> · <span>pydub</span> · <span>lightning-whisper-mlx</span> · <span>openai</span> · <span>anthropic</span> · <span>Tone.js</span> · <span>ElevenLabs</span>
+          </td>
+          <td>
+            <code>music-transcription-monitor</code> — AMT research dashboard<br>
+            <code>chaos_magick</code> — handwriting-to-font engine<br>
+            <code>chaos_magick</code> — handwriting-to-font engine<br>
+            <code>suno-yt-twin</code>
+          </td>
+        </tr>
+        <tr>
+          <td class="twin-domain">AI Agents</td>
+          <td class="twin-tools">
+            <span>MiniMax Code</span> · <span>Mavis</span> · <span>Coder</span> · <span>General</span> · <span>Reviewer</span> · <span>Verifier</span>
+          </td>
+          <td>
+            <code>mavis/skills/</code> — kai-persona · ai-toolbox-100 · micro-saas-idea-factory · long-horizon-agent-benchmark · ast-npm-pipeline<br>
+            <code>workspace/</code> — 30+ session directories with context
+          </td>
+        </tr>
+        <tr>
+          <td class="twin-domain">Visual / Web</td>
+          <td class="twin-tools">
+            <span>Three.js</span> · <span>WebGL</span> · <span>Vite</span> · <span>React</span> · <span>Pika</span> · <span>Midjourney</span> · <span>DaVinci Resolve</span> · <span>Topaz VideoAI</span>
+          </td>
+          <td>
+            <code>shader-arsenal</code> · <code>evolving-art</code> · <code>long-horizon</code> · <code>visual_gl</code> · <code>solokit</code> · <code>shader-arsenal</code>
+          </td>
+        </tr>
+        <tr>
+          <td class="twin-domain">Knowledge</td>
+          <td class="twin-tools">
+            <span>Obsidian</span> · <span>Grimoire</span> · <span>MuseScore 4</span> · <span>MiniMax Code</span>
+          </td>
+          <td>
+            <code>Grimoire_NotebookLM_Source.md</code> · <code>Grimoire_Status.log</code><br>
+            <code>memory/user.md</code> · <code>memory/agent.md</code> · session history
+          </td>
+        </tr>
+        <tr>
+          <td class="twin-domain">GitHub</td>
+          <td class="twin-tools">
+            <span>gh CLI</span> · <span>Git</span> · <span>Vercel</span> · <span>GitHub Pages</span>
+          </td>
+          <td>
+            30 repos — kai-systems · prompting-system · bob-mover-lexicon · solokit · audio-to-score · long-horizon · shader-arsenal · music-transcription-monitor · chaos_magick · workspace-archive
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note" style="margin-top: 28px;">
+      <strong>The filesystem is not a backup. It's a pipeline.</strong> The twin doesn't catalog it for its own sake — it catalogs it so the right tool gets routed to the right job without manual retrieval. "I want to transcribe this trumpet recording" should route to the trumpet stack, not require re-discovering which tools are installed.
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">02 — Architecture</div>
+    <h2>Four layers. Each one does one thing.</h2>
+    <p class="section-sub">The twin is not a single agent. It's a layered system — scan, model, reason, orchestrate — where each layer feeds the next and none of them require a human in the loop once the work is defined.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Scanner</div>
+          <div class="level-title">Index the environment</div>
+          <div class="level-desc">Runs on demand or on a cron. Traverses the filesystem at startup — reads <code>package.json</code>, <code>requirements.txt</code>, agent skills, installed tools (brew, pip, npm), GitHub repos, Obsidian vault index. Outputs a structured snapshot of every tool, project, and capability available right now. If a new package appears, the scanner finds it on the next run.</div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Model</div>
+          <div class="level-title">Persist the inventory as memory</div>
+          <div class="level-desc">The scan output writes to a durable layer — <code>memory/user.md</code> for cross-project preferences, <code>memory/agent.md</code> for agent behavior, and a project-level twin index for domain-specific context. This is what allows the twin to know "I already have a transcription pipeline" without re-running discovery. The model is the memory of the environment.</div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Reasoner</div>
+          <div class="level-title">Match work to tools</div>
+          <div class="level-desc">Given a job — "transcribe this recording", "build a landing page for X", "run the weekly report" — the reasoner reads the model and selects the right tools in the right order. It's not an LLM doing freeform reasoning from scratch; it's a routing decision constrained by the actual inventory. If Whisper and pYIN are installed, route audio transcription there. If not, route to the API. The reasoner picks from what's actually available.</div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">4</div>
+        <div>
+          <div class="level-name">Orchestrator</div>
+          <div class="level-title">Set up and run the work process</div>
+          <div class="level-desc">Once the reasoner picks the path, the orchestrator sets up the process — writes a subagent prompt, schedules a cron, triggers a webhook, or hands off to the next agent in the chain. The orchestrator also handles failure modes: if a step fails, it retries, rolls back, or escalates to the human digest with a diff. The orchestrator is the part that does the work. The other three layers exist so it always knows what it's working with.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">03 — Running Processes</div>
+    <h2>What the twin has already set up.</h2>
+    <p class="section-sub">The twin doesn't just describe the environment — it acts on it. These are the processes it has already built or maintains.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+
+        <div class="flow-node signal">
+          <strong>ArXiv + GitHub research swarm</strong> — cron-triggered subagent that runs every 48 hours. Polls arXiv for new AMT (automatic music transcription) papers, checks GitHub for tool updates, writes a summary. Result lands in <code>music-transcription-monitor/docs/</code> and triggers a GitHub Pages rebuild.
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action">
+          <strong>Puppeteer deploy-test loop</strong> — fires on every web deploy. Visits the live URL, asserts HTTP 200, checks DOM for expected strings, fails on console errors, re-deploys and retries if the check fails. This is the twin verifying its own output.
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action">
+          <strong>Memory maintenance</strong> — after each session, the twin appends durable learnings to <code>memory/user.md</code> (cross-project rules), <code>memory/agent.md</code> (agent behavior), or project-level <code>AGENTS.md</code> (repo-specific context). The next agent that spins up reads the model and starts with working context.
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node signal">
+          <strong>E2E regression gate</strong> — after any sprint (multi-step code change), the twin runs the project's end-to-end test before reporting done. Typecheck + build pass don't count. The test must pass. If it fails, the sprint isn't done.
+        </div>
+
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>The twin is not a dashboard.</strong> A dashboard shows you what's happening. The twin acts on what it finds. If a cron job fails three times in a row, the twin doesn't tell you — it flags it, rolls back the broken deploy, and puts the diagnostic in your next digest. You read the report, not the process.
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">04 — Twin Instances</div>
+    <h2>Domain-specific twins built from the scan.</h2>
+    <p class="section-sub">The general scanner produces domain-specific instantiations. Each twin knows its domain cold and runs the process without asking.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <h3>Music Twin</h3>
+        <p>Index: Ableton projects, Pro Tools sessions, MuseScore scores, sample libraries, Max for Live patches, Vital presets. Knows the full instrument and FX chain. Routes requests to the right environment — Suno for demos, DAW for production, Solokit for analysis.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Trumpet Twin</h3>
+        <p>Index: live recordings, transcription output, charts, practice logs. Scans the trumpet stack directories. Keeps the pYIN + VexFlow pipeline warm. Routes new recordings to the ingest → transcribe → chart flow automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Web Twin</h3>
+        <p>Index: all <code>kajica2.github.io</code> pages, Vercel deploys, GitHub Pages repos. Keeps all spokes linked to the hub. Monitors every deploy with the Puppeteer gate. Notifies (or auto-reverts) on failure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>Research Twin</h3>
+        <p>Index: arXiv, GitHub trending, bob_mover_jazz_lexicon, Solokit corpus, Obsidian vault. Runs the AMT research swarm. Keeps the music-transcription-monitor dashboard current. Alerts when a new relevant paper or tool appears.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">Toolchain</div>
+    <h2>What the twin is built from.</h2>
+
+    <div class="tag-row">
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Filesystem traversal (Python stdlib)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>GitHub CLI (gh)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>MiniMax Code (mavis, coder, reviewer, verifier)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Memory layers (user.md · agent.md · AGENTS.md)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Cron self-reminders</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>Subagent swarms</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Puppeteer deploy gate</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>E2E regression test runner</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>Python pip introspection</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>npm package.json parsing</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>cron scheduling</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>JSON durable memory</span>
+    </div>
+  </section>
+
+  <div class="end-mark">
+    <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="16,4 28,11 28,21 16,28 4,21 4,11" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+    <p>Five stacks. One philosophy. Zero babysitting.</p>
+  </div>
+
+</div>
+</body>
+</html>

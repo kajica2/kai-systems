@@ -14,6 +14,7 @@ Five production stacks. One philosophy. Zero babysitting.
 | [music](https://kajica2.github.io/kai-systems/music/) | The Indie Music AI Stack — from Splice to Suno |
 | [chatterbot-tts](https://kajica2.github.io/kai-systems/chatterbot-tts/) | The Voice-AI Stack — a voice that sounds like you, on a phone, this weekend |
 | [trumpet](https://kajica2.github.io/kai-systems/trumpet/) | The Trumpet Transcription Stack — cut up live recordings, transcribe, chart |
+| [twin](https://kajica2.github.io/kai-systems/twin/) | The Cognitive Twin — scan the filesystem, index tools, run the work processes autonomously |
 
 ## Tech
 
