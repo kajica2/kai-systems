@@ -13,6 +13,7 @@ Five production stacks. One philosophy. Zero babysitting.
 | [video](https://kajica2.github.io/kai-systems/video/) | The 5-Layer Video Stack — ship a 90-second explainer without a producer |
 | [music](https://kajica2.github.io/kai-systems/music/) | The Indie Music AI Stack — from Splice to Suno |
 | [chatterbot-tts](https://kajica2.github.io/kai-systems/chatterbot-tts/) | The Voice-AI Stack — a voice that sounds like you, on a phone, this weekend |
+| [trumpet](https://kajica2.github.io/kai-systems/trumpet/) | The Trumpet Transcription Stack — cut up live recordings, transcribe, chart |
 
 ## Tech
 

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Trumpet Transcription Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: #3a4256; border-radius: 4px; }
+  pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+  code { background: var(--bg-warm); padding: 2px 7px; border-radius: 5px; font-size: 13px; color: var(--ink); border: 1px solid var(--line); }
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .feature-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px 28px; }
+  .feature-card:hover { border-color: var(--primary); }
+  .feature-card-icon { width: 40px; height: 40px; background: var(--primary-soft); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .feature-card-icon svg { color: var(--primary); }
+  .feature-card h3 { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--ink-muted); line-height: 1.55; }
+  .code-block-wrap { position: relative; }
+  .code-label { position: absolute; top: 16px; right: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .note { background: var(--bg-warm); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; font-size: 15px; color: var(--ink-muted); line-height: 1.6; margin-top: 28px; }
+  .note strong { color: var(--ink); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 100px; font-size: 13px; color: var(--ink-muted); }
+  .tag svg { color: var(--primary); flex-shrink: 0; }
+  .end-mark { text-align: center; margin: 88px 0 0; padding-top: 48px; border-top: 1px solid var(--line); }
+  .end-mark svg { color: var(--primary); opacity: 0.35; }
+  .end-mark p { font-size: 13px; color: var(--ink-faint); margin-top: 14px; letter-spacing: 0.06em; }
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 38px; }
+    section h2 { font-size: 30px; }
+    .level { grid-template-columns: 1fr; gap: 8px; }
+    .level-num { font-size: 36px; }
+    .page { padding: 64px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">← kai-systems</a>
+    <div class="hub-links">
+      <a href="../terminal/">Terminal</a>
+      <a href="../os/">OS</a>
+      <a href="../video/">Video</a>
+      <a href="../music/">Music</a>
+      <a href="../chatterbot-tts/">Voice</a>
+      <a href="./" class="here">Trumpet</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Audio Intelligence</div>
+    <h1>Cut it up. <em>Transcribe it.</em> Chart it.</h1>
+    <p class="hero-lede">A front-end for the full trumpet workflow — from live recording to segmented takes, pitch-accurate transcription, and printable music charts. Drop a file in, get a chart out.</p>
+    <div class="hero-divider">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="16,4 28,11 28,21 16,28 4,21 4,11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+    </div>
+    <svg class="geom geom-tr" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="140,10 265,77 265,203 140,270 15,203 15,77" stroke="currentColor" stroke-width="1.5" fill="none"/><polygon points="140,40 230,95 230,185 140,240 50,185 50,95" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="140" cy="140" r="45" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="140" cy="140" r="80" stroke="currentColor" stroke-width="1"/><line x1="140" y1="60" x2="140" y2="220" stroke="currentColor" stroke-width="0.8"/><line x1="60" y1="140" x2="220" y2="140" stroke="currentColor" stroke-width="0.8"/></svg>
+  </div>
+
+  <section>
+    <div class="section-kicker">01 — Ingest</div>
+    <h2>The problem starts with the file.</h2>
+    <p class="section-sub">A 45-minute live recording of practice or a gig. One track. Dozens of fragments worth keeping. The workflow has to start by making sense of what's already there.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-node signal">
+          <strong>Drop audio or video file</strong> — WAV, MP3, FLAC, MOV, MP4. Drag onto the browser window or click to browse. No upload limit in local mode; cloud mode streams chunked to the API.
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action">
+          <strong>Silence segmentation</strong> — pYIN / librosa splits the recording at silence gaps below –42 dB for longer than 600ms. Results shown as a scrollable waveform with labeled regions. Accept, merge, or re-cut by clicking.
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action">
+          <strong>Select the takes worth keeping</strong> — click to flag segments as <code>keeper</code>, <code>maybe</code>, or <code>discard</code>. Bulk-select all above a quality threshold.
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Why silence segmentation first?</strong> Whack-a-mole transcription of a full 45-minute file is slow and noisy. Cutting at silence boundaries gives you discrete, manageable units — each one a clean target for pitch detection and transcription. The segmentation pass is the one that requires the most UX attention.
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">02 — Transcribe</div>
+    <h2>Three modes. Match the input to the output.</h2>
+    <p class="section-sub">Whisper for speech and lyrics. pYIN + librosa for pitch. LilyPond for notation. Each mode has a distinct output target and toolchain.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">A</div>
+        <div>
+          <div class="level-name">Speech / Lyrics</div>
+          <div class="level-title">Whisper Transcription</div>
+          <div class="level-desc">For rehearsal notes, talking between pieces, stage patter, or lyrics. Output: timestamped SRT/VTT subtitle file + plain text. Runs locally via <code>faster-whisper</code> or streams to the OpenAI Whisper API.</div>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">faster-whisper</span><span class="tool-purpose"> — local, GPU-accelerated, CTranslate2</span></span>
+            <span class="tool"><span class="tool-name">Whisper API</span><span class="tool-purpose"> — cloud fallback, no setup</span></span>
+            <span class="tool"><span class="tool-name">SRT / VTT</span><span class="tool-purpose"> — subtitle export</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">B</div>
+        <div>
+          <div class="level-name">Monophonic Pitch</div>
+          <div class="level-title">pYIN Pitch Detection</div>
+          <div class="level-desc">For clean trumpet lines — one pitch at a time. pYIN outputs a frequency + confidence per frame at 256-sample hop. Threshold at 0.85 confidence; below that, mark as vibrato, breath, or silence. Output: MIDI note numbers with onset times → MIDI file or LilyPond input.</div>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">pYIN</span><span class="tool-purpose"> — probabilistic YIN, madmom / librosa</span></span>
+            <span class="tool"><span class="tool-name">librosa</span><span class="tool-purpose"> — display, resampling, beat sync</span></span>
+            <span class="tool"><span class="tool-name">MIDI</span><span class="tool-purpose"> — note number + onset + duration</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">C</div>
+        <div>
+          <div class="level-name">Rhythm + Form</div>
+          <div class="level-title">Beat + Downbeat Tracking</div>
+          <div class="level-desc">For charting the form — where are you in the piece, where are the downbeats, where does the bridge hit. librosa beat tracker + madmom DBN beat tracker running in parallel; the one with higher tap-confidence wins. Output: bar numbers, form labels, and a click-track-aligned MIDI grid.</div>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">madmom DBN</span><span class="tool-purpose"> — double-deep beat tracking</span></span>
+            <span class="tool"><span class="tool-name">librosa beat</span><span class="tool-purpose"> — onset + tempo estimation</span></span>
+            <span class="tool"><span class="tool-purpose">bar grid + form labels</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">03 — Chart</div>
+    <h2>From MIDI to a chart you can read.</h2>
+    <p class="section-sub">MIDI notes without timing are just a piano roll. The chart is the artifact — something you can print, mark up, and read at the stand.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <h3>LilyPond → PDF</h3>
+        <p>MIDI → LilyPond notation input. Output is a typeset PDF — clean, readable, archival quality. Treble clef, concert pitch, bar lines at detected downbeats. Best for clean single-melody takes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Web Notation (VexFlow)</h3>
+        <p>Render the chart in-browser using VexFlow. Interactive — hover a note to hear it, click to transpose, export to MusicXML. For quick reads without a PDF round-trip.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>MuseScore Import</h3>
+        <p>Export as MusicXML. Open directly in MuseScore for engraving, transposition, part extraction, and MIDI playback. The PDF is the front-end deliverable; MuseScore is the editorial layer.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <h3>Annotation Layer</h3>
+        <p>After the chart is generated, annotate in-browser — mark fingering, breath marks, dynamics, and section labels directly on the notation. Annotations persist as a JSON overlay, separate from the score itself.</p>
+      </div>
+    </div>
+
+    <div class="code-block-wrap" style="margin-top: 32px;">
+      <span class="code-label">lilypond snippet</span>
+      <pre><code>\relative c' {
+  \time 4/4
+  \tempo 4=120
+
+  % pYIN output: MIDI notes → LilyPond input
+  % 60 = middle C, 62 = D, 64 = E, 65 = F ...
+  c4 d4 e4 f4 | g2 g4. f8 | e1
+  | c'4 d'4 e'4 d'4 | c'1 |
+}</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">04 — Front-End</div>
+    <h2>The interface that holds it together.</h2>
+    <p class="section-sub">A single-page app. Three panels. Drag a file in, navigate the results. No server required for local mode — all the heavy lifting happens in Web Workers and the browser AudioContext.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Left Panel — File + Waveform</div>
+          <div class="level-title">Drop zone → segmented waveform</div>
+          <div class="level-desc">Web Audio API decodes the file into an AudioBuffer. Wavesurfer.js renders the waveform. Click any region to play. Segments are colored by quality flag (keeper / maybe / discard). Export selected segments as individual WAV files.</div>
+        </div>
+      </div>
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Center Panel — Transcription Output</div>
+          <div class="level-title">Live mode: runs in a Web Worker</div>
+          <div class="level-desc">Whisper runs via the <code>transformers.js</code> ONNX pipeline in a Web Worker — no round-trip to a server. pYIN runs in a SharedArrayBuffer-enabled worker. Progress bar shows per-segment status. Output scrolls as it arrives.</div>
+        </div>
+      </div>
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Right Panel — Chart Preview</div>
+          <div class="level-title">VexFlow renders the notation live</div>
+          <div class="level-desc">As MIDI notes are detected, they stream into the VexFlow renderer. The chart updates incrementally — watch the notes appear on the staff as pYIN detects them. Final chart is exportable as SVG, PDF (via html2canvas + jsPDF), or MusicXML.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-kicker">Toolchain</div>
+    <h2>The stack in order of execution.</h2>
+
+    <div class="tag-row">
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Drag &amp; Drop / File API</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Web Audio API / AudioContext</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>librosa.js / pYIN (Web Worker)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Wavesurfer.js (waveform)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>faster-whisper / transformers.js</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>madmom DBN beat tracker</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>VexFlow (notation render)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>LilyPond (PDF export)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>MusicXML (MuseScore interop)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>html2canvas + jsPDF (PDF from SVG)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>JSON annotation overlay</span>
+    </div>
+  </section>
+
+  <div class="end-mark">
+    <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="16,4 28,11 28,21 16,28 4,21 4,11" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+    <p>Five stacks. One philosophy. Zero babysitting.</p>
+  </div>
+
+</div>
+</body>
+</html>
