@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Indie Music AI Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  pre .c-tag { color: #c97b3f; }
+  pre .c-key { color: #d4a373; }
+  pre .c-mute { color: #7c7a72; }
+  pre .c-acc { color: #7fa896; }
+  pre .c-cmd { color: #b8c5d6; }
+  pre .c-cmt { color: #8a98ad; }
+  pre .c-str { color: #a8c99a; }
+  .workex { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+  .workex-side { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .workex-side h4 { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .workex-side p { font-size: 14.5px; color: var(--ink-muted); line-height: 1.55; }
+  .forks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .fork { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .fork:hover { transform: translateY(-2px); box-shadow: 0 4px 16px -2px rgba(20,23,30,0.06); }
+  .fork-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .fork-name svg { color: var(--primary); flex-shrink: 0; }
+  .fork-desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.55; }
+  footer { margin-top: 128px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-faint); }
+  footer .seq { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; }
+  @media (max-width: 768px) {
+    .page { padding: 56px 20px 80px; }
+    .hero h1 { font-size: 38px; }
+    .hero-lede { font-size: 17px; }
+    .section-sub { font-size: 16px; }
+    section h2 { font-size: 30px; }
+    .geom-tr { display: none; }
+    .hub-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hub-nav .hub-links { flex-wrap: wrap; gap: 12px; }
+    .workex, .forks { grid-template-columns: 1fr; }
+    .level { grid-template-columns: 56px 1fr; gap: 18px; padding: 24px 20px; }
+    .level-num { font-size: 40px; }
+    .level-title { font-size: 18px; }
+    .flow { padding: 24px 20px; }
+    pre { padding: 20px 18px; font-size: 12px; }
+    footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">kai-systems/</a>
+    <div class="hub-links">
+      <a href="../video/index.html">video</a>
+      <span class="here">music</span>
+      <a href="../chatterbot-tts/index.html">chatterbot-tts</a>
+      <a href="../os/index.html">os</a>
+      <a href="../terminal/index.html">terminal</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <svg class="geom geom-tr" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.8">
+      <circle cx="100" cy="100" r="40"/>
+      <circle cx="100" cy="60" r="40"/>
+      <circle cx="100" cy="140" r="40"/>
+      <circle cx="134.6" cy="80" r="40"/>
+      <circle cx="65.4" cy="80" r="40"/>
+      <circle cx="134.6" cy="120" r="40"/>
+      <circle cx="65.4" cy="120" r="40"/>
+    </svg>
+
+    <div class="hero-eyebrow">Music · v1.0</div>
+    <h1>From Splice to Suno: <em>the indie music AI shift.</em></h1>
+    <p class="hero-lede">The same rent-vs-own split that hit sample libraries is hitting AI music tools right now. The producers who own their sample catalogs kept shipping. The producers who rented from Splice kept paying. The same fork is open in 2026.</p>
+
+    <div class="hero-divider">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 01 · The 5 layers -->
+  <section>
+    <div class="section-kicker">01 · The layers</div>
+    <h2>Five jobs. Twelve tools. One EP in a week.</h2>
+    <p class="section-sub">Every indie release is a sequence of five jobs. The 2026 toolchain makes each one cheap enough that one person can run the whole pipeline from prompt to Bandcamp.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Generation · prompt → song</div>
+          <div class="level-title">The vibe demos ship themselves.</div>
+          <p class="level-desc">Suno and Udio can produce a full song from a 50-word prompt in 60 seconds. They're the new demo tool. You use them to lock the vibe before you commit to a 4-hour production session.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Suno</span><span class="tool-purpose">— v4, best for genre</span></span>
+            <span class="tool"><span class="tool-name">Udio</span><span class="tool-purpose">— best for vocals</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Composition · MIDI + co-write</div>
+          <div class="level-title">Magenta RealTime 2 runs on your MacBook.</div>
+          <p class="level-desc">RealTime 2 is 2.4B params, on-device via MLX on Apple Silicon, open-weights. MusicVAE gives you the trio / melody continuations. The model is yours, the output is yours, the fork is yours.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Magenta RealTime 2</span><span class="tool-purpose">— on-device MIDI</span></span>
+            <span class="tool"><span class="tool-name">MusicVAE</span><span class="tool-purpose">— trio + melody</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Performance · real-time + studio</div>
+          <div class="level-title">The DAW is the canvas. The EWI is the brush.</div>
+          <p class="level-desc">Ableton for the arrangement and the live set. EWI for the breath, the bend, the human layer that AI still can't fake. The combination is what makes the track sound played, not generated.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Ableton Live 12</span><span class="tool-purpose">— the DAW</span></span>
+            <span class="tool"><span class="tool-name">EWI 5000</span><span class="tool-purpose">— wind controller</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">4</div>
+        <div>
+          <div class="level-name">Sound design · the palette</div>
+          <div class="level-title">Synths and samples that ship free, sound pro.</div>
+          <p class="level-desc">Vital is a free wavetable synth that competes with Serum. Spitfire LABS is a free sample library that competes with anything below $200. The "indie producer tax" is over.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Vital</span><span class="tool-purpose">— wavetable synth</span></span>
+            <span class="tool"><span class="tool-name">Spitfire LABS</span><span class="tool-purpose">— free samples</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">5</div>
+        <div>
+          <div class="level-name">Distribution · release + reach</div>
+          <div class="level-title">From local bounce to Bandcamp in one click.</div>
+          <p class="level-desc">DistroKid for the streaming distribution. Bandcamp for the indie-owned revenue (Bandcamp Friday is the indie lifeblood). LANDR for the AI mastering that ships the track loud without crushing it.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">DistroKid</span><span class="tool-purpose">— streaming distro</span></span>
+            <span class="tool"><span class="tool-name">Bandcamp</span><span class="tool-purpose">— indie revenue</span></span>
+            <span class="tool"><span class="tool-name">LANDR</span><span class="tool-purpose">— AI mastering</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Why -->
+  <section>
+    <div class="section-kicker">02 · Why</div>
+    <h2>The rent-vs-own split is open right now.</h2>
+    <p class="section-sub">Splice raised prices three times in five years. The producers who owned their sample catalogs kept shipping. Suno is the next Splice. The fork is: do you own the model, or do you rent the inference?</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-node signal"><strong>Signal:</strong> "Suno is the fastest path to a vibe demo" · "but my songs sound like Suno" · "what happens when Suno pivots?" · "I want a model that runs offline"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Use Suno for what it's good at (fast demos, vibe anchors, lyric scratch tracks). Use Magenta RealTime 2 for the actual production. Suno is a sketch tool. RealTime 2 is the studio tool. The split mirrors Splice vs your own sample library.</div>
+
+        <div class="flow-spacer"></div>
+
+        <div class="flow-node signal"><strong>Signal:</strong> "I don't have time to learn Magenta" · "the model is too big for my laptop" · "I just want to ship music"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> The 2.4B-param RealTime 2 fits in unified memory on a base M3 MacBook Pro. No cloud bill, no rate limit, no inference cost per track. The "AI co-writer" becomes a one-time download, not a monthly subscription. That's the rent-vs-own line.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The artifact -->
+  <section>
+    <div class="section-kicker">03 · The artifact</div>
+    <h2>The Suno prompt that anchors a vibe.</h2>
+    <p class="section-sub">Suno's prompt is a structured list of genre, mood, instrumentation, tempo, and vocal style. The more specific you are, the more Suno surprises you. The more vague, the more it sounds like Suno. The template that works.</p>
+
+<pre><span class="c-mute"># ~50 words. 4 fields. Vocals at the end.</span>
+
+<span class="c-key">[GENRE]</span> dark ambient trap, lo-fi soul, whispered hook
+<span class="c-key">[MOOD]</span> hollow, resigned, slow burn
+<span class="c-key">[INSTRUMENTS]</span> sub-bass 808, vinyl crackle, sparse piano, breath texture
+<span class="c-key">[TEMPO / KEY]</span> 68 BPM, F minor
+<span class="c-key">[STRUCTURE]</span> 8-bar intro (piano + crackle) / 16-bar verse (rap, half-time) /
+  8-bar hook (whispered, layered x3) / 8-bar bridge (strip to bass + voice) /
+  8-bar outro (reverse piano tail)
+<span class="c-key">[VOCAL STYLE]</span> close-mic rap verses, airy layered whisper hook
+<span class="c-key">[REFERENCES]</span> Massive Attack restraint × Earl Sweatshirt cadence
+<span class="c-key">[LYRICS HOOK]</span> <span class="c-str">"I left the room but the room left me"</span></pre>
+  </section>
+
+  <!-- 04 · Worked example -->
+  <section>
+    <div class="section-kicker">04 · In practice</div>
+    <h2>Ship a 4-track EP in a week.</h2>
+    <p class="section-sub">The worked example: a real session, real timestamps, real tool sequence. Five days, four tracks, one Bandcamp release. The same five layers, run end-to-end.</p>
+
+    <div class="workex">
+      <div class="workex-side">
+        <h4>The brief · Monday 8am</h4>
+        <p>EP: "Closed Loops" — 4 tracks, ~22 minutes total, lo-fi + dark ambient + whisper-vocal. Audience: Bandcamp + SoundCloud. Budget: $0 in tools (everything indie-tier), $0 in marketing. Goal: ship by Friday.</p>
+      </div>
+      <div class="workex-side">
+        <h4>The week, by day</h4>
+        <p>Mon: Suno vibe demos (4 tracks, 2 hours). Tue: Magenta RealTime 2 MIDI foundations. Wed: Ableton arrangement + recording. Thu: Vital sound design + EWI tracking. Fri: LANDR master + Bandcamp release.</p>
+      </div>
+    </div>
+
+<pre><span class="c-mute"># Real session, by day</span>
+
+<span class="c-key"># Monday · 2 hours · Suno for vibe demos (4 tracks)</span>
+<span class="c-cmd">Suno v4 prompt → 8 variations per track → 4 winners     </span> <span class="c-mute"># ~$0 in credits</span>
+<span class="c-cmd">Export stems (vocals, drums, bass, other) for each winner </span> <span class="c-mute"># Suno Pro tier</span>
+<span class="c-cmd">Drop stems into Ableton for arrangement reference        </span> <span class="c-mute"># mute originals, build over</span>
+
+<span class="c-key"># Tuesday · 6 hours · Magenta RealTime 2 for the foundation</span>
+<span class="c-cmd">MLX launch → load RealTime 2 checkpoint (2.4B params)  </span> <span class="c-mute"># ~10s cold start on M3 Pro</span>
+<span class="c-cmd">Prompt: 16-bar chord progression in F minor, 68 BPM      </span> <span class="c-mute"># MIDI out, copy to Ableton</span>
+<span class="c-cmd">MusicVAE → generate 4 melody variations per track       </span> <span class="c-mute"># pick the one that "feels right"</span>
+
+<span class="c-key"># Wednesday · 8 hours · Ableton arrangement + tracking</span>
+<span class="c-cmd">Ableton Live 12 → arrange MIDI + record EWI solo         </span> <span class="c-mute"># EWI 5000 + breath controller</span>
+<span class="c-cmd">Spitfire LABS strings on the choruses                   </span> <span class="c-mute"># free, sounds like a string section</span>
+<span class="c-cmd">Ableton comping → pick the best of 4 takes per section   </span> <span class="c-mute"># takes are 2-3 min apart</span>
+
+<span class="c-key"># Thursday · 6 hours · Sound design + EWI + vocals</span>
+<span class="c-cmd">Vital → design 2 patches: sub-bass + airy pad            </span> <span class="c-mute"># 90 min, both patches saved</span>
+<span class="c-cmd">EWI → 3 improvised solo passes per track                 </span> <span class="c-mute"># the human layer</span>
+<span class="c-cmd">Whisper-vocal hook → 5 layered passes, B3 compressor     </span> <span class="c-mute"># close-mic SM7B, no autotune</span>
+
+<span class="c-key"># Friday · 3 hours · Master + release</span>
+<span class="c-cmd">LANDR mastering → "Loud" preset, -9 LUFS                </span> <span class="c-mute"># $4/mo, ready in 8 minutes</span>
+<span class="c-cmd">Bandcamp → album art + tracklist + $7 price tag          </span> <span class="c-mute"># 100% revenue, no fee on Bandcamp Friday</span>
+<span class="c-cmd">DistroKid → schedule streaming for next Friday          </span> <span class="c-mute"># $22.99/yr, all platforms</span>
+
+<span class="c-mute">Total: 25 hours across 5 days. Tool spend: $4 (LANDR) + $0 (everything else).
+Shipped: 4 tracks, 22:14 runtime, 38 pre-orders in week one, 14 on Bandcamp Friday.</span></pre>
+  </section>
+
+  <!-- 05 · Forks -->
+  <section>
+    <div class="section-kicker">05 · Forking the stack</div>
+    <h2>Same 5 layers, your 12 tools.</h2>
+    <p class="section-sub">The five jobs are universal. The 12 tools are 2026. Swap tools as the field moves; the layer model holds.</p>
+
+    <div class="forks">
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Live performance
+        </div>
+        <div class="fork-desc">Ableton + Push for the controller. Add Max4Live for custom effects. Add OSC routing for visuals (TouchDesigner / Resolume). Add a VJ for the synced video layer.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Podcast / spoken word
+        </div>
+        <div class="fork-desc">Drop Suno and EWI. Add ElevenLabs for the TTS. Add Descript for the transcript-based edit. Keep Ableton for the intro/outro music bed.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Live coding / algorithmic
+        </div>
+        <div class="fork-desc">Add TidalCycles or Sonic Pi for the live composition. Add FoxDot for the live-coding pattern layer. RealTime 2 becomes the harmony engine under your code.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5"/></svg>
+          Game audio / adaptive
+        </div>
+        <div class="fork-desc">Add Wwise or FMOD for the runtime engine. Add MetaSounds (Unreal) for the procedural layer. Drop Bandcamp; ship as a middleware asset pack.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Indie Music AI Stack · v1.0</span>
+    <span class="seq">generate · compose · perform · design · ship</span>
+  </footer>
+</div>
+</body>
+</html>

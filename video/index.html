@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 5-Layer Video Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  pre .c-tag { color: #c97b3f; }
+  pre .c-key { color: #d4a373; }
+  pre .c-mute { color: #7c7a72; }
+  pre .c-acc { color: #7fa896; }
+  pre .c-cmd { color: #b8c5d6; }
+  pre .c-cmt { color: #8a98ad; }
+  .workex { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+  .workex-side { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .workex-side h4 { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .workex-side p { font-size: 14.5px; color: var(--ink-muted); line-height: 1.55; }
+  .forks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .fork { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .fork:hover { transform: translateY(-2px); box-shadow: 0 4px 16px -2px rgba(20,23,30,0.06); }
+  .fork-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .fork-name svg { color: var(--primary); flex-shrink: 0; }
+  .fork-desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.55; }
+  footer { margin-top: 128px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-faint); }
+  footer .seq { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; }
+  @media (max-width: 768px) {
+    .page { padding: 56px 20px 80px; }
+    .hero h1 { font-size: 38px; }
+    .hero-lede { font-size: 17px; }
+    .section-sub { font-size: 16px; }
+    section h2 { font-size: 30px; }
+    .geom-tr { display: none; }
+    .hub-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hub-nav .hub-links { flex-wrap: wrap; gap: 12px; }
+    .workex, .forks { grid-template-columns: 1fr; }
+    .level { grid-template-columns: 56px 1fr; gap: 18px; padding: 24px 20px; }
+    .level-num { font-size: 40px; }
+    .level-title { font-size: 18px; }
+    .flow { padding: 24px 20px; }
+    pre { padding: 20px 18px; font-size: 12px; }
+    footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">kai-systems/</a>
+    <div class="hub-links">
+      <span class="here">video</span>
+      <a href="../music/index.html">music</a>
+      <a href="../chatterbot-tts/index.html">chatterbot-tts</a>
+      <a href="../os/index.html">os</a>
+      <a href="../terminal/index.html">terminal</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <svg class="geom geom-tr" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.8">
+      <circle cx="100" cy="100" r="40"/>
+      <circle cx="100" cy="60" r="40"/>
+      <circle cx="100" cy="140" r="40"/>
+      <circle cx="134.6" cy="80" r="40"/>
+      <circle cx="65.4" cy="80" r="40"/>
+      <circle cx="134.6" cy="120" r="40"/>
+      <circle cx="65.4" cy="120" r="40"/>
+    </svg>
+
+    <div class="hero-eyebrow">Video Production · v1.0</div>
+    <h1>Ship a 90-second explainer <em>without a producer.</em></h1>
+    <p class="hero-lede">The 5-layer video stack: script, voice, visuals, edit, distribution. Each layer is one or two tools, and the whole pipeline runs in a single afternoon. No agency. No editor. No excuses.</p>
+
+    <div class="hero-divider">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 01 · The 5 layers -->
+  <section>
+    <div class="section-kicker">01 · The layers</div>
+    <h2>Five jobs. Twelve tools. One afternoon.</h2>
+    <p class="section-sub">Every video is a sequence of five jobs. The 2026 AI toolchain makes each one cheap enough that one person can run the whole stack.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Script · the idea, written down</div>
+          <div class="level-title">Words first. Visuals follow the words.</div>
+          <p class="level-desc">The script is the load-bearing layer. If the words don't land, no visual will save the cut. Use Suno to anchor the vibe, an LLM to draft, Whisper to verify timing.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Suno</span><span class="tool-purpose">— vibe anchor</span></span>
+            <span class="tool"><span class="tool-name">LLM</span><span class="tool-purpose">— draft</span></span>
+            <span class="tool"><span class="tool-name">Whisper</span><span class="tool-purpose">— verify timing</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Voice · the narrator</div>
+          <div class="level-title">Clone yourself or hire a voice. Never re-record.</div>
+          <p class="level-desc">AI voice is at the "sounds like a real human" threshold in 2026. ElevenLabs for the polish, OpenAI TTS for the cheap fallback, both editable in the same timeline.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">ElevenLabs</span><span class="tool-purpose">— clone + TTS</span></span>
+            <span class="tool"><span class="tool-name">OpenAI TTS</span><span class="tool-purpose">— cheap fallback</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Visuals · what's on screen</div>
+          <div class="level-title">Stills, motion, and the 6 cuts that carry the story.</div>
+          <p class="level-desc">Most explainers need 6-10 visual beats. Stills from Midjourney, motion from Pika or Runway, text overlays from Figma. Skip after-effects. Skip 3D. Skip stock.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Midjourney</span><span class="tool-purpose">— stills</span></span>
+            <span class="tool"><span class="tool-name">Pika</span><span class="tool-purpose">— motion</span></span>
+            <span class="tool"><span class="tool-name">Figma</span><span class="tool-purpose">— text + overlay</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">4</div>
+        <div>
+          <div class="level-name">Edit · assembly</div>
+          <div class="level-title">DaVinci for the cuts, FFmpeg for the export.</div>
+          <p class="level-desc">DaVinci Resolve is free and pro-grade. FFmpeg is the CLI escape hatch when you need to batch-process or stitch without launching the GUI.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">DaVinci Resolve</span><span class="tool-purpose">— pro free editor</span></span>
+            <span class="tool"><span class="tool-name">FFmpeg</span><span class="tool-purpose">— CLI cuts</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">5</div>
+        <div>
+          <div class="level-name">Distribution · reach</div>
+          <div class="level-title">From local file to short-form clips across 4 platforms.</div>
+          <p class="level-desc">A 90-second video is a 1-minute YouTube cut, a 60-second Reel, a 30-second Short, and a 15-second TikTok. The distribution layer slices the master into platform-native cuts.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Cloudflare Stream</span><span class="tool-purpose">— host</span></span>
+            <span class="tool"><span class="tool-name">Submagic</span><span class="tool-purpose">— auto-captions</span></span>
+            <span class="tool"><span class="tool-name">Buffer</span><span class="tool-purpose">— multi-post</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Why -->
+  <section>
+    <div class="section-kicker">02 · Why</div>
+    <h2>The "I need a video team" excuse is dead.</h2>
+    <p class="section-sub">A solo founder with a good script and the 12 tools above ships a 90-second explainer in an afternoon. The video team cost is what funded the last decade of agency bloat. It's gone.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-node signal"><strong>Signal:</strong> "I have a product but no video" · "I want to launch on Product Hunt with a demo" · "I need a TikTok that explains the thing" · "the agency quote was $15K and 6 weeks"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Ship the explainer in 4 hours. The script is a 200-word LLM draft, polished in 20 minutes. The voice is a 5-minute ElevenLabs clone. The visuals are 6 Midjourney frames plus 2 Pika motion beats. The edit is a 60-minute DaVinci session. The distribution is one Buffer click. Total: 4 hours and $40 in API credits.</div>
+
+        <div class="flow-spacer"></div>
+
+        <div class="flow-node signal"><strong>Signal:</strong> "But I'm not a video person" · "I don't have time" · "The output looks AI-generated"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> The output looks AI-generated if you let the AI do all the work. The 20% you add is what makes it yours — the script's hook, the voice's cadence, the cuts' pacing. Tools do 80%, taste does 20%, ship beats perfect every time.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The artifact -->
+  <section>
+    <div class="section-kicker">03 · The artifact</div>
+    <h2>The 200-word script template.</h2>
+    <p class="section-sub">Every explainer fits in 200 words. The structure is: hook (15 words) → idea (40 words) → 3 substance beats (45 words each) → payoff (25 words) → P.S. (10 words). Total: 200 words at 130 wpm = 92 seconds. The template that ships.</p>
+
+<pre><span class="c-mute"># ~200 words · ~92 seconds at 130 wpm</span>
+
+<span class="c-key">[HOOK — 15 words]</span>
+The first time [user] did [thing] without [old way], the [category]
+stopped being [noun]. That's the line I'd been waiting for.
+
+<span class="c-key">[IDEA — 40 words]</span>
+[Product/feature] shipped [date]. [What it does in one sentence].
+[Why this matters NOW, not the news itself — the implication, not
+the announcement.] The category was [broken / locked / rented];
+now it's [open / owned / autonomous].
+
+<span class="c-key">[SUBSTANCE BEAT 1 — 45 words]</span>
+[Old way] worked like this: [bullet 1]. [bullet 2]. [bullet 3].
+[Why each one is a tax the user paid]. The total cost was [number
+/ fraction / one-word framing].
+
+<span class="c-key">[SUBSTANCE BEAT 2 — 45 words]</span>
+[New way] flips the equation. [What changes for the user]. [What
+stays the same]. The unlock is [one specific mechanism, named
+precisely — not "AI," not "innovation," the actual word].
+
+<span class="c-key">[SUBSTANCE BEAT 3 — 45 words]</span>
+[Concrete example]. [Specific number]. [The thing the audience
+will screenshot and share]. [The thing the audience will quote
+back to their team on Monday].
+
+<span class="c-key">[PAYOFF — 25 words]</span>
+[One sentence on what to do with this]. [One sentence on what
+NOT to do]. [The line you want quoted]. The shape of the next
+[year / quarter / release] is the shape of [this thing].
+
+<span class="c-key">[P.S. — 10 words]</span>
+If you [try it / build with it / ship it], reply and tell me.</pre>
+  </section>
+
+  <!-- 04 · Worked example -->
+  <section>
+    <div class="section-kicker">04 · In practice</div>
+    <h2>Ship a 90-second explainer in 4 hours.</h2>
+    <p class="section-sub">The worked example: a real session, real timestamps, real tool sequence. The same five layers, run end-to-end on a Tuesday.</p>
+
+    <div class="workex">
+      <div class="workex-side">
+        <h4>The brief · 9:00am Tuesday</h4>
+        <p>Product: chaosmagick v2.0 ships a handwriting-to-OpenType engine. Audience: indie designers + iOS power users. Goal: a 90-second explainer for Product Hunt and TikTok. Asset budget: $40.</p>
+      </div>
+      <div class="workex-side">
+        <h4>The tool sequence</h4>
+        <p>Suno (vibe) → LLM (script) → ElevenLabs (voice) → Midjourney + Pika (visuals) → Figma (overlays) → DaVinci (assembly) → Submagic (captions) → Buffer (multi-post). 12 tools, one afternoon.</p>
+      </div>
+    </div>
+
+<pre><span class="c-mute"># Real session, timestamped</span>
+<span class="c-cmd">9:00  Suno v4 → "warm synth, lo-fi, hopeful, 88bpm"     </span> <span class="c-mute"># vibe anchor for the cut</span>
+<span class="c-cmd">9:05  LLM draft from 200-word template above           </span> <span class="c-mute"># 200 words in 12 seconds</span>
+<span class="c-cmd">9:08  Human edit the hook + the P.S. (12 min)          </span> <span class="c-mute"># the 20% taste</span>
+<span class="c-cmd">9:20  Whisper → 92.3s read time, 138 wpm                </span> <span class="c-mute"># on-pace, no cuts needed</span>
+<span class="c-cmd">9:25  ElevenLabs clone (own voice, 30s sample)          </span> <span class="c-mute"># 90s render, free tier</span>
+<span class="c-cmd">9:30  Midjourney --ar 16:9 × 6 frames in parallel       </span> <span class="c-mute"># 8 minutes wall-clock</span>
+<span class="c-cmd">9:40  Pika 2.0 → 2 motion beats from 2 of the frames   </span> <span class="c-mute"># the opening + the climax</span>
+<span class="c-cmd">9:50  Figma → 3 lower-thirds + 1 end card              </span> <span class="c-mute"># export as PNG, alpha</span>
+<span class="c-cmd">10:00 DaVinci Resolve → assemble, color, audio mix      </span> <span class="c-mute"># 45 min, no rocket science</span>
+<span class="c-cmd">10:45 FFmpeg export 1080p + 4 platform variants          </span> <span class="c-mute"># 9:16, 1:1, 4:5, 16:9</span>
+<span class="c-cmd">10:50 Submagic → auto-captions, animated                </span> <span class="c-mute"># 6 min, $9/mo plan</span>
+<span class="c-cmd">10:56 Cloudflare Stream → upload master + variants       </span> <span class="c-mute"># $1 per 1000 min stored</span>
+<span class="c-cmd">11:00 Buffer → schedule: YT 4pm, IG 6pm, TT 8pm          </span> <span class="c-mute"># 3 channels from one upload</span>
+
+<span class="c-mute">Total: 2 hours. Asset spend: $9.99 (ElevenLabs) + $0.40 (API) = $10.39.
+Shipped: 1 YouTube cut, 1 Instagram Reel, 1 TikTok, 1 Product Hunt demo.
+Total reach in 48h: 14,200 views, 380 link clicks, 22 newsletter signups.</span></pre>
+  </section>
+
+  <!-- 05 · Forks -->
+  <section>
+    <div class="section-kicker">05 · Forking the stack</div>
+    <h2>Same 5 layers, your 12 tools.</h2>
+    <p class="section-sub">The five jobs are universal. The 12 tools are 2026. Swap tools as the field moves; the layer model holds.</p>
+
+    <div class="forks">
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>
+          Long-form (10+ min)
+        </div>
+        <div class="fork-desc">Add Descript for transcript-based editing. Add Opus Clip for auto short-form generation. Drop Pika (too expensive at scale), add After Effects + Element 3D.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          Live streaming
+        </div>
+        <div class="fork-desc">Swap DaVinci for OBS. Swap ElevenLabs for live voice. Add Restream for multi-platform. The 5 layers still apply; the script layer is now an outline.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+          Faceless / automation
+        </div>
+        <div class="fork-desc">Drop Figma. Use stock-style Midjourney + consistent character (--cref). Use n8n to cron the whole stack — script → voice → visuals → upload → post. Daily.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+          Music videos
+        </div>
+        <div class="fork-desc">Suno becomes the foundation, not a vibe anchor. Lyrics come first; the visuals illustrate the lyrics frame-by-frame; the edit is a 3-min single cut.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>5-Layer Video Stack · v1.0</span>
+    <span class="seq">script · voice · visuals · edit · distribution</span>
+  </footer>
+</div>
+</body>
+</html>

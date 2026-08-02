@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Personal OS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  pre .c-tag { color: #c97b3f; }
+  pre .c-key { color: #d4a373; }
+  pre .c-mute { color: #7c7a72; }
+  pre .c-acc { color: #7fa896; }
+  pre .c-cmd { color: #b8c5d6; }
+  pre .c-cmt { color: #8a98ad; }
+  .workex { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+  .workex-side { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .workex-side h4 { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .workex-side p { font-size: 14.5px; color: var(--ink-muted); line-height: 1.55; }
+  .forks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .fork { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .fork:hover { transform: translateY(-2px); box-shadow: 0 4px 16px -2px rgba(20,23,30,0.06); }
+  .fork-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .fork-name svg { color: var(--primary); flex-shrink: 0; }
+  .fork-desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.55; }
+  footer { margin-top: 128px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-faint); }
+  footer .seq { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; }
+  @media (max-width: 768px) {
+    .page { padding: 56px 20px 80px; }
+    .hero h1 { font-size: 38px; }
+    .hero-lede { font-size: 17px; }
+    .section-sub { font-size: 16px; }
+    section h2 { font-size: 30px; }
+    .geom-tr { display: none; }
+    .hub-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hub-nav .hub-links { flex-wrap: wrap; gap: 12px; }
+    .workex, .forks { grid-template-columns: 1fr; }
+    .level { grid-template-columns: 56px 1fr; gap: 18px; padding: 24px 20px; }
+    .level-num { font-size: 40px; }
+    .level-title { font-size: 18px; }
+    .flow { padding: 24px 20px; }
+    pre { padding: 20px 18px; font-size: 12px; }
+    footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">kai-systems/</a>
+    <div class="hub-links">
+      <a href="../video/index.html">video</a>
+      <a href="../music/index.html">music</a>
+      <a href="../chatterbot-tts/index.html">chatterbot-tts</a>
+      <span class="here">os</span>
+      <a href="../terminal/index.html">terminal</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <svg class="geom geom-tr" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.8">
+      <circle cx="100" cy="100" r="40"/>
+      <circle cx="100" cy="60" r="40"/>
+      <circle cx="100" cy="140" r="40"/>
+      <circle cx="134.6" cy="80" r="40"/>
+      <circle cx="65.4" cy="80" r="40"/>
+      <circle cx="134.6" cy="120" r="40"/>
+      <circle cx="65.4" cy="120" r="40"/>
+    </svg>
+
+    <div class="hero-eyebrow">Personal OS · v1.0</div>
+    <h1>The morning routine is a <em>deployment target.</em></h1>
+    <p class="hero-lede">macOS is the platform. Raycast, Hammerspoon, Hazel, launchd, and the rest are the runtime. Build the personal OS that runs your day — without you operating it.</p>
+
+    <div class="hero-divider">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 01 · The 5 layers -->
+  <section>
+    <div class="section-kicker">01 · The layers</div>
+    <h2>Five layers between you and a day that runs itself.</h2>
+    <p class="section-sub">The personal OS isn't one app. It's a stack. Capture flows in. Automation shapes it. Memory holds it. Triggers fire it. Output ships it. Each layer is one or two tools, no more.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Capture · the inbox for everything</div>
+          <div class="level-title">Make friction zero between thought and record.</div>
+          <p class="level-desc">If capturing costs a click, you won't capture. The capture layer has to be reachable in under a second, from anywhere, with zero modal flow.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Raycast</span><span class="tool-purpose">— launcher + snippets</span></span>
+            <span class="tool"><span class="tool-name">Karabiner-Elements</span><span class="tool-purpose">— key remap</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Automation · the things you do every day, scripted</div>
+          <div class="level-title">If you do it twice, script it. If you do it weekly, schedule it.</div>
+          <p class="level-desc">The automation layer is the difference between a productivity stack and a job. Every repeated action is a workflow that should run without you.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Hammerspoon</span><span class="tool-purpose">— Lua + macOS</span></span>
+            <span class="tool"><span class="tool-name">Apple Shortcuts</span><span class="tool-purpose">— cross-app glue</span></span>
+            <span class="tool"><span class="tool-name">n8n</span><span class="tool-purpose">— self-hosted workflows</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Memory · your second brain, on disk</div>
+          <div class="level-title">Plain-text files. Backlinks. Yours forever.</div>
+          <p class="level-desc">Notion is a database someone else owns. The memory layer is plain markdown, on your filesystem, queryable with rg, port-out in 60 seconds.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Obsidian</span><span class="tool-purpose">— vault + graph</span></span>
+            <span class="tool"><span class="tool-name">Logseq</span><span class="tool-purpose">— block outlining</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">4</div>
+        <div>
+          <div class="level-name">Trigger · fires on its own</div>
+          <div class="level-title">The time, the file, the event — and the thing runs.</div>
+          <p class="level-desc">A trigger is anything that wakes a workflow. A clock. A file landing. A USB plug. The trigger layer is the wiring between the world and your automations.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">launchd</span><span class="tool-purpose">— macOS cron</span></span>
+            <span class="tool"><span class="tool-name">Hazel</span><span class="tool-purpose">— file watcher</span></span>
+            <span class="tool"><span class="tool-name">Keyboard Maestro</span><span class="tool-purpose">— event-based</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">5</div>
+        <div>
+          <div class="level-name">Output · publish, deploy, share</div>
+          <div class="level-title">From local file to public URL, no manual deploy.</div>
+          <p class="level-desc">The output layer is the part most people skip. They capture, they automate, they forget to ship. The output layer is a one-way function: local artifact → deployed URL → indexed by Google.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">mkdocs</span><span class="tool-purpose">— docs site</span></span>
+            <span class="tool"><span class="tool-name">Cloudflare Pages</span><span class="tool-purpose">— push-to-deploy</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Why -->
+  <section>
+    <div class="section-kicker">02 · Why</div>
+    <h2>The OS is a bottleneck only if you let it be.</h2>
+    <p class="section-sub">Most "productivity advice" optimizes the wrong layer. They teach you to plan better, journal harder, wake up earlier. None of it scales. The personal OS scales because each script runs forever.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-node signal"><strong>Signal:</strong> "I keep doing the same setup every morning" · "I forget to back up the notes folder" · "I lose 30 minutes a week moving files around" · "my weekly review takes 4 hours"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Each one is a workflow. Each workflow has a trigger, a script, an output. The morning routine is a launchd job that runs at 6:30. The backup is a launchd job that runs hourly. The file move is a Hazel rule. The review is an Obsidian template + a cron job that drafts the agenda.</div>
+
+        <div class="flow-spacer"></div>
+
+        <div class="flow-node signal"><strong>Signal:</strong> "But I want flexibility" · "What if I change my mind?" · "I don't want to be a robot"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> The OS handles the boring 80%. You handle the 20% that actually requires taste. The morning routine doesn't need your taste — it needs the lights on, the playlist queued, the inbox triaged. The 4-hour review becomes a 20-minute review because the system pre-drafted it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The artifact -->
+  <section>
+    <div class="section-kicker">03 · The artifact</div>
+    <h2>launchd: cron that survives sleep.</h2>
+    <p class="section-sub">cron on macOS is technically there, but launchd is the right answer. It respects sleep/wake, runs missed jobs on resume, and lives at ~/Library/LaunchAgents/. Three plist files, and your day runs itself.</p>
+
+<pre><span class="c-mute"># ~/Library/LaunchAgents/com.kai.morning.plist</span>
+<span class="c-key">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="c-key">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"</span>
+  <span class="c-key">"http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="c-key">&lt;plist version="1.0"&gt;</span>
+<span class="c-key">&lt;dict&gt;</span>
+  <span class="c-key">&lt;key&gt;</span>Label<span class="c-key">&lt;/key&gt;</span><span class="c-cmd">&lt;string&gt;</span>com.kai.morning<span class="c-cmd">&lt;/string&gt;</span>
+  <span class="c-key">&lt;key&gt;</span>ProgramArguments<span class="c-key">&lt;/key&gt;</span>
+  <span class="c-cmd">&lt;array&gt;</span>
+    <span class="c-cmd">&lt;string&gt;</span>/bin/zsh<span class="c-cmd">&lt;/string&gt;</span>
+    <span class="c-cmd">&lt;string&gt;</span>-c<span class="c-cmd">&lt;/string&gt;</span>
+    <span class="c-cmd">&lt;string&gt;</span>~/bin/morning.sh<span class="c-cmd">&lt;/string&gt;</span>
+  <span class="c-cmd">&lt;/array&gt;</span>
+  <span class="c-key">&lt;key&gt;</span>StartCalendarInterval<span class="c-key">&lt;/key&gt;</span>
+  <span class="c-cmd">&lt;dict&gt;</span>
+    <span class="c-key">&lt;key&gt;</span>Hour<span class="c-key">&lt;/key&gt;</span><span class="c-cmd">&lt;integer&gt;</span>6<span class="c-cmd">&lt;/integer&gt;</span>
+    <span class="c-key">&lt;key&gt;</span>Minute<span class="c-key">&lt;/key&gt;</span><span class="c-cmd">&lt;integer&gt;</span>30<span class="c-cmd">&lt;/integer&gt;</span>
+  <span class="c-cmd">&lt;/dict&gt;</span>
+  <span class="c-key">&lt;key&gt;</span>RunAtLoad<span class="c-key">&lt;/key&gt;</span><span class="c-cmd">&lt;true/&gt;</span>
+<span class="c-key">&lt;/dict&gt;</span>
+<span class="c-key">&lt;/plist&gt;</span>
+
+<span class="c-mute"># ~/bin/morning.sh</span>
+<span class="c-cmd">#!/bin/zsh</span>
+<span class="c-cmt"># 6:30am. Lights, music, inbox triaged, day planned.</span>
+
+<span class="c-cmd">osascript -e </span><span class="c-tag">'tell application "System Events" to set volume 5'</span>  <span class="c-mute"># gentle wake volume</span>
+<span class="c-cmd">osascript -e </span><span class="c-tag">'tell application "Music" to play playlist "Morning"'</span>
+<span class="c-cmd">hs -A -c </span><span class="c-tag">"lightMode('sunrise')"</span>  <span class="c-mute"># Hammerspoon: warm lights via Hue</span>
+<span class="c-cmd">~/bin/triage-inbox.sh</span>  <span class="c-mute"># labels, archives, surfaces 3 must-reads</span>
+<span class="c-cmd">~/bin/draft-daily-note.sh</span>  <span class="c-mute"># Obsidian daily note pre-populated</span>
+<span class="c-cmd">terminal-notifier -message </span><span class="c-tag">"Day is set. Top 3 ready."</span>  <span class="c-mute"># desktop notification</span></pre>
+  </section>
+
+  <!-- 04 · Worked example -->
+  <section>
+    <div class="section-kicker">04 · In practice</div>
+    <h2>The Monday morning audit.</h2>
+    <p class="section-sub">A worked example: the weekly review that used to take 4 hours and now takes 20 minutes, because the system pre-drafts the agenda and ships the report.</p>
+
+    <div class="workex">
+      <div class="workex-side">
+        <h4>The trigger · Sunday 8pm</h4>
+        <p>A launchd job fires. ~/bin/weekly-review.sh runs. It pulls last week's git activity, last week's calendar, last week's inbox labels, and last week's Obsidian daily notes into one markdown file.</p>
+      </div>
+      <div class="workex-side">
+        <h4>The output · 8:04pm</h4>
+        <p>An Obsidian weekly note appears with: shipped-this-week, parked-this-week, replied-this-week, replied-but-stuck, meetings-that-shipped, meetings-that-didn't. Plus three open threads the LLM thinks need attention.</p>
+      </div>
+    </div>
+
+<pre><span class="c-mute"># ~/bin/weekly-review.sh (excerpt)</span>
+
+<span class="c-mute"># 1. Pull the last 7 days of git</span>
+<span class="c-cmd">gh pr list --state merged --search </span><span class="c-tag">"merged:&gt;=$(date -v-7d +%Y-%m-%d)"</span> \
+  <span class="c-cmd">--json number,title,mergedAt \</span>
+  <span class="c-cmd">| jq -r </span><span class="c-tag">'.[] | "- #\(.number) \(.title)"'</span> <span class="c-cmd">&gt;&gt; /tmp/shipped.md</span>
+
+<span class="c-mute"># 2. Pull the last 7 days of calendar</span>
+<span class="c-cmd">icalBuddy -n -ec "Meetings" -ps "/Time Zone/⏰/🔁" -b "" \
+  -eep "notes,location" eventsFrom:$(date -v-7d +%Y-%m-%d) to:$(date +%Y-%m-%d) \
+  <span class="c-cmd">&gt;&gt; /tmp/meetings.md</span>
+
+<span class="c-mute"># 3. Pull the last 7 days of Obsidian daily notes</span>
+<span class="c-cmd">rg -l '^# Daily' ~/Notes/daily/*.md -t markdown | tail -7 \
+  <span class="c-cmd">| xargs cat &gt;&gt; /tmp/journal.md</span>
+
+<span class="c-mute"># 4. LLM synthesizes the threads</span>
+<span class="c-cmd">cat /tmp/shipped.md /tmp/meetings.md /tmp/journal.md \
+  <span class="c-cmd">| llm -m claude-haiku-4-5 \
+  -s </span><span class="c-tag">"Pull 3 open threads from this week, 3 dropped balls, 3 wins."</span> \
+  <span class="c-cmd">&gt; ~/Notes/weekly/$(date +%Y-%m-%d)-review.md</span>
+
+<span class="c-mute"># 5. Open the note in Obsidian, ready for the user to scan</span>
+<span class="c-cmd">open -a Obsidian </span><span class="c-tag">"~/Notes/weekly/$(date +%Y-%m-%d)-review.md"</span>
+
+<span class="c-mute">Total runtime: 38 seconds. The user reads, adds 2 minutes of edits, ships.</span></pre>
+  </section>
+
+  <!-- 05 · Forks -->
+  <section>
+    <div class="section-kicker">05 · Forking the OS</div>
+    <h2>Same 5 layers, your 12 tools.</h2>
+    <p class="section-sub">Cross-platform picks for the same architecture. The layers don't change. The bindings do.</p>
+
+    <div class="forks">
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10"/></svg>
+          Linux / WSL
+        </div>
+        <div class="fork-desc">Replace Raycast with rofi/wofi. Replace Hammerspoon with sxhkd + xdotool. Replace Hazel with inotifywait. Everything else maps cleanly.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Windows / PowerToys
+        </div>
+        <div class="fork-desc">Replace Raycast with PowerToys Run. Replace Hammerspoon with AutoHotkey. Replace Hazel with File History + a watcher script. launchd → Task Scheduler.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          iOS-first
+        </div>
+        <div class="fork-desc">Replace Raycast with Shortcuts + a single home-screen widget. Replace Obsidian with Working Copy + a git-based vault. Trigger layer: Shortcuts automations.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Team-shared OS
+        </div>
+        <div class="fork-desc">Drop the personal bias. Add Linear, Notion, Slack automations. The triggers become "when Linear ticket moves" and "when Stripe webhook fires."</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Personal OS · v1.0</span>
+    <span class="seq">capture · automate · memory · trigger · output</span>
+  </footer>
+</div>
+</body>
+</html>

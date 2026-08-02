@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Terminal-First Dev Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff;
+    --line: #e9e3d6; --line-soft: #f0eadf;
+    --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72;
+    --primary: #c97b3f;
+    --primary-soft: rgba(201, 123, 63, 0.08);
+    --primary-mid: rgba(201, 123, 63, 0.18);
+    --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+
+  /* Nav strip */
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+
+  /* Hero */
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+
+  /* Sections */
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+
+  /* Category cards */
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+
+  /* Flow */
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+
+  /* Code blocks */
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  pre .c-tag { color: #c97b3f; }
+  pre .c-key { color: #d4a373; }
+  pre .c-mute { color: #7c7a72; }
+  pre .c-acc { color: #7fa896; }
+  pre .c-cmd { color: #b8c5d6; }
+
+  /* Worked example split */
+  .workex { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+  .workex-side { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .workex-side h4 { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .workex-side p { font-size: 14.5px; color: var(--ink-muted); line-height: 1.55; }
+
+  /* Forks */
+  .forks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .fork { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .fork:hover { transform: translateY(-2px); box-shadow: 0 4px 16px -2px rgba(20,23,30,0.06); }
+  .fork-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .fork-name svg { color: var(--primary); flex-shrink: 0; }
+  .fork-desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.55; }
+
+  footer { margin-top: 128px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-faint); }
+  footer .seq { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; }
+
+  @media (max-width: 768px) {
+    .page { padding: 56px 20px 80px; }
+    .hero h1 { font-size: 38px; }
+    .hero-lede { font-size: 17px; }
+    .section-sub { font-size: 16px; }
+    section h2 { font-size: 30px; }
+    .geom-tr { display: none; }
+    .hub-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hub-nav .hub-links { flex-wrap: wrap; gap: 12px; }
+    .workex, .forks { grid-template-columns: 1fr; }
+    .level { grid-template-columns: 56px 1fr; gap: 18px; padding: 24px 20px; }
+    .level-num { font-size: 40px; }
+    .level-title { font-size: 18px; }
+    .flow { padding: 24px 20px; }
+    pre { padding: 20px 18px; font-size: 12px; }
+    footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">kai-systems/</a>
+    <div class="hub-links">
+      <a href="../video/index.html">video</a>
+      <a href="../music/index.html">music</a>
+      <a href="../chatterbot-tts/index.html">chatterbot-tts</a>
+      <a href="../os/index.html">os</a>
+      <span class="here">terminal</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <svg class="geom geom-tr" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.8">
+      <circle cx="100" cy="100" r="40"/>
+      <circle cx="100" cy="60" r="40"/>
+      <circle cx="100" cy="140" r="40"/>
+      <circle cx="134.6" cy="80" r="40"/>
+      <circle cx="65.4" cy="80" r="40"/>
+      <circle cx="134.6" cy="120" r="40"/>
+      <circle cx="65.4" cy="120" r="40"/>
+    </svg>
+
+    <div class="hero-eyebrow">Development · v1.0</div>
+    <h1>12 tools that <em>replaced my IDE.</em></h1>
+    <p class="hero-lede">The terminal is the most underrated productivity surface in software. Here's the stack that runs my entire dev workflow — from blank file to deployed PR in 30 minutes, no IDE required.</p>
+
+    <div class="hero-divider">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 01 · The 5 categories -->
+  <section>
+    <div class="section-kicker">01 · The categories</div>
+    <h2>Five jobs. Twelve tools. Zero IDE.</h2>
+    <p class="section-sub">Every dev task is one of five jobs: navigate, search, version, multiplex, monitor. The 12 tools below are the best 2026 has for each. Everything else is overhead.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Navigation · where am I, where do I go?</div>
+          <div class="level-title">Move through the filesystem at the speed of thought.</div>
+          <p class="level-desc">Most of your day is jumping. To a project, to a file, to a function. These three tools make every jump faster than a click.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">zoxide</span><span class="tool-purpose">— smarter cd</span></span>
+            <span class="tool"><span class="tool-name">fzf</span><span class="tool-purpose">— fuzzy finder</span></span>
+            <span class="tool"><span class="tool-name">eza</span><span class="tool-purpose">— modern ls</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Search · find things fast</div>
+          <div class="level-title">Read code like a search engine, not a prayer.</div>
+          <p class="level-desc">When you know what you're looking for, regex is faster than a sidebar. When you don't, fuzzy file find is faster than a sidebar.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">ripgrep</span><span class="tool-purpose">— rg, the grep killer</span></span>
+            <span class="tool"><span class="tool-name">fd</span><span class="tool-purpose">— modern find</span></span>
+            <span class="tool"><span class="tool-name">bat</span><span class="tool-purpose">— cat with highlighting</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Git · version control at speed</div>
+          <div class="level-title">Branch, commit, push, PR — without leaving the keyboard.</div>
+          <p class="level-desc">TUI for git is a different product than a Git GUI. lazygit for the staging and conflict flows, gh for everything GitHub does.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">lazygit</span><span class="tool-purpose">— TUI git</span></span>
+            <span class="tool"><span class="tool-name">gh</span><span class="tool-purpose">— GitHub CLI</span></span>
+            <span class="tool"><span class="tool-name">delta</span><span class="tool-purpose">— readable diffs</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">4</div>
+        <div>
+          <div class="level-name">Shell · prompt + persistence</div>
+          <div class="level-title">Look fast. Stay fast across sessions.</div>
+          <p class="level-desc">A good prompt tells you what branch, what env, what cluster, without you asking. A multiplexer means your work survives every disconnect.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">starship</span><span class="tool-purpose">— cross-shell prompt</span></span>
+            <span class="tool"><span class="tool-name">tmux</span><span class="tool-purpose">— persistent sessions</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">5</div>
+        <div>
+          <div class="level-name">Monitoring · what's happening</div>
+          <div class="level-title">See disk, CPU, and processes without a GUI.</div>
+          <p class="level-desc">A dashboard tab is a context switch. These tools answer the same question in one keystroke, from the prompt you're already in.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">btop</span><span class="tool-purpose">— system monitor</span></span>
+            <span class="tool"><span class="tool-name">dust</span><span class="tool-purpose">— modern du</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Why -->
+  <section>
+    <div class="section-kicker">02 · Why</div>
+    <h2>IDEs are a tax on iteration speed.</h2>
+    <p class="section-sub">Every IDE is a window manager for the same 12 things a terminal already does. The IDE adds a sidebar, a settings dialog, and a 4-second startup tax. The terminal adds pipes, scripts, and remote-friendly everything.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-node signal"><strong>Signal:</strong> "I want to compose my workflow, not click through menus" · "I work on a remote box half the time" · "my IDE broke after an OS update" · "I keep opening the same 4 files"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Drop the IDE. The terminal is composable. The terminal pipes. The terminal scripts. The terminal is the same on every machine you SSH into, and it's the same 30 years from now.</div>
+
+        <div class="flow-spacer"></div>
+
+        <div class="flow-node signal"><strong>Signal:</strong> "But I need IntelliSense" · "But the debugger" · "But git merge conflicts"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Use the language server protocol (LSP) from the terminal (nvim/vim/helix + coc.nvim or native LSP). Use lazygit for the 3-way merge UI. Use the gdb/lldb TUI for breakpoints. The terminal does all of this, faster, without the chrome.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The artifact -->
+  <section>
+    <div class="section-kicker">03 · The artifact</div>
+    <h2>The 30-second feature ship.</h2>
+    <p class="section-sub">From "I need to add a config flag" to "PR is up, tests passed, deploy started." Every tool in the stack plays one role. The whole sequence is muscle memory by month two.</p>
+
+<pre><span class="c-mute"># 1. Jump to the project (zoxide remembers frequency)</span>
+<span class="c-cmd">z kai-systems      </span>  <span class="c-mute"># → ~/Documents/NFT-/kai-systems</span>
+
+<span class="c-mute"># 2. Find the file to edit (fzf, no sidebar needed)</span>
+<span class="c-cmd">fzf                </span>  <span class="c-mute"># type a fragment of the name</span>
+
+<span class="c-mute"># 3. Read the surrounding code (bat, syntax-highlighted)</span>
+<span class="c-cmd">bat src/config.ts  </span>  <span class="c-mute"># → opens in pager, line numbers on</span>
+
+<span class="c-mute"># 4. Search the codebase (ripgrep, 10x faster than grep)</span>
+<span class="c-cmd">rg 'themePref' .   </span>  <span class="c-mute"># → every match, every file, in 80ms</span>
+
+<span class="c-mute"># 5. Edit (helix or nvim, LSP-driven autocomplete)</span>
+<span class="c-cmd">hx src/config.ts   </span>  <span class="c-mute"># → no chrome, no 4s startup, LSP works</span>
+
+<span class="c-mute"># 6. Stage + commit + push (lazygit, keyboard-only)</span>
+<span class="c-cmd">lazygit            </span>  <span class="c-mute"># → space=stage, c=commit, p=push</span>
+
+<span class="c-mute"># 7. Open the PR (gh, one line, full GitHub)</span>
+<span class="c-cmd">gh pr create --fill</span>  <span class="c-mute"># → opens browser to the PR</span>
+
+<span class="c-mute"># 8. Watch CI (gh, polled from the terminal)</span>
+<span class="c-cmd">gh pr checks --watch</span> <span class="c-mute"># → live status, no tab switching</span></pre>
+  </section>
+
+  <!-- 04 · Worked example -->
+  <section>
+    <div class="section-kicker">04 · In practice</div>
+    <h2>What this looks like on a real morning.</h2>
+    <p class="section-sub">The worked example is the most useful part. Same stack, different task. The shape is always: jump, find, read, edit, commit, push, verify.</p>
+
+    <div class="workex">
+      <div class="workex-side">
+        <h4>The task · 7:14am</h4>
+        <p>Add a new "dark" theme preset to chaosmagick. The design team sent 3 hex values overnight. Tests, deploy, Slack notification — all autonomous.</p>
+      </div>
+      <div class="workex-side">
+        <h4>The tool sequence</h4>
+        <p>zoxide → fzf → bat → ripgrep → hx → lazygit → gh → btop (verify memory after deploy). Eight tools, no clicks, 22 minutes including CI.</p>
+      </div>
+    </div>
+
+<pre><span class="c-mute"># Real session, timestamped</span>
+<span class="c-cmd">7:14  z chaosmagick                 </span>  <span class="c-mute"># in the project in 1 keystroke</span>
+<span class="c-cmd">7:15  fzf → src/themes.ts           </span>  <span class="c-mute"># 4 chars typed, file selected</span>
+<span class="c-cmd">7:16  bat src/themes.ts | less     </span>  <span class="c-mute"># scan the existing presets</span>
+<span class="c-cmd">7:18  rg 'ThemePreset' . --type ts  </span>  <span class="c-mute"># find every usage in 80ms</span>
+<span class="c-cmd">7:19  hx src/themes.ts              </span>  <span class="c-mute"># add the "dark" preset, LSP completes</span>
+<span class="c-cmd">7:24  pnpm test                     </span>  <span class="c-mute"># 18s, all green</span>
+<span class="c-cmd">7:26  lazygit                      </span>  <span class="c-mute"># stage, commit "feat: dark theme preset"</span>
+<span class="c-cmd">7:28  gh pr create --fill          </span>  <span class="c-mute"># PR #142, 3 reviewers auto-assigned</span>
+<span class="c-cmd">7:31  gh pr checks --watch         </span>  <span class="c-mute"># CI green, deploy preview URL ready</span>
+<span class="c-cmd">7:36  btop                         </span>  <span class="c-mute"># memory stable, no leak, ship it</span>
+
+<span class="c-mute">22 minutes. Zero clicks. Zero IDE tabs. The terminal ran the whole flow.</span></pre>
+  </section>
+
+  <!-- 05 · Forks -->
+  <section>
+    <div class="section-kicker">05 · Forking the stack</div>
+    <h2>Same 5 categories, your 12 tools.</h2>
+    <p class="section-sub">The 5 categories don't change. The 12 tools do. Pick the best 2026 has for each job in your stack.</p>
+
+    <div class="forks">
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+          Frontend dev
+        </div>
+        <div class="fork-desc">Add pnpm, vite (CLI), wrangler. Swap hx for hx with the Astro/Vue LSP. Add httpie for API calls.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>
+          Backend / API
+        </div>
+        <div class="fork-desc">Add grpcurl, jq, mitmproxy. Add lazydocker for the local stack. Keep btop for prod triage.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          DevOps / SRE
+        </div>
+        <div class="fork-desc">Add kubectl (with kube-ps1 prompt), terraform, stern (multi-pod logs), opentelemetry-cli.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Data / ML
+        </div>
+        <div class="fork-desc">Add jupyter-lab (terminal UI), miller (CSV/JSON), uv (Python). Add tensorboard CLI for live metrics.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Terminal-First Dev Stack · v1.0</span>
+    <span class="seq">12 tools · 5 categories · 0 IDE</span>
+  </footer>
+</div>
+</body>
+</html>

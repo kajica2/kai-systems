@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Voice-AI Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
+  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
+  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
+  .hub-nav a:hover { color: var(--primary); }
+  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
+  .hub-nav .hub-links { display: flex; gap: 20px; }
+  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: 0; right: -80px; width: 280px; height: 280px; }
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  .levels { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .level { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; position: relative; }
+  .level:last-child { border-bottom: none; }
+  .level:hover { background: var(--primary-soft); }
+  .level-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .level-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .level-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .level-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 580px; }
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+  .tool-name { color: var(--primary); font-weight: 500; }
+  .tool-purpose { color: var(--ink-faint); }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 36px 36px; }
+  .flow-row { display: grid; gap: 14px; }
+  .flow-node { padding: 18px 22px; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+  .flow-node strong { font-weight: 600; color: var(--ink); }
+  .flow-node.signal { background: var(--primary-soft); border-left: 3px solid var(--primary); }
+  .flow-node.action { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .flow-arrow { text-align: center; color: var(--ink-faint); font-size: 18px; line-height: 1; margin: 4px 0; }
+  .flow-spacer { height: 12px; }
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  pre { background: #14171e; color: #e9e3d6; padding: 28px 32px; border-radius: 14px; overflow-x: auto; font-size: 13px; line-height: 1.75; margin: 28px 0 0; box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 6px 24px -8px rgba(20,23,30,0.18); }
+  pre::-webkit-scrollbar { height: 8px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  pre .c-tag { color: #c97b3f; }
+  pre .c-key { color: #d4a373; }
+  pre .c-mute { color: #7c7a72; }
+  pre .c-acc { color: #7fa896; }
+  pre .c-cmd { color: #b8c5d6; }
+  pre .c-cmt { color: #8a98ad; }
+  pre .c-str { color: #a8c99a; }
+  .workex { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+  .workex-side { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .workex-side h4 { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .workex-side p { font-size: 14.5px; color: var(--ink-muted); line-height: 1.55; }
+  .forks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .fork { padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .fork:hover { transform: translateY(-2px); box-shadow: 0 4px 16px -2px rgba(20,23,30,0.06); }
+  .fork-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .fork-name svg { color: var(--primary); flex-shrink: 0; }
+  .fork-desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.55; }
+  footer { margin-top: 128px; padding-top: 32px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-faint); }
+  footer .seq { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; }
+  @media (max-width: 768px) {
+    .page { padding: 56px 20px 80px; }
+    .hero h1 { font-size: 38px; }
+    .hero-lede { font-size: 17px; }
+    .section-sub { font-size: 16px; }
+    section h2 { font-size: 30px; }
+    .geom-tr { display: none; }
+    .hub-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hub-nav .hub-links { flex-wrap: wrap; gap: 12px; }
+    .workex, .forks { grid-template-columns: 1fr; }
+    .level { grid-template-columns: 56px 1fr; gap: 18px; padding: 24px 20px; }
+    .level-num { font-size: 40px; }
+    .level-title { font-size: 18px; }
+    .flow { padding: 24px 20px; }
+    pre { padding: 20px 18px; font-size: 12px; }
+    footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+    <a href="../index.html" class="hub-mark">kai-systems/</a>
+    <div class="hub-links">
+      <a href="../video/index.html">video</a>
+      <a href="../music/index.html">music</a>
+      <span class="here">chatterbot-tts</span>
+      <a href="../os/index.html">os</a>
+      <a href="../terminal/index.html">terminal</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <svg class="geom geom-tr" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.8">
+      <circle cx="100" cy="100" r="40"/>
+      <circle cx="100" cy="60" r="40"/>
+      <circle cx="100" cy="140" r="40"/>
+      <circle cx="134.6" cy="80" r="40"/>
+      <circle cx="65.4" cy="80" r="40"/>
+      <circle cx="134.6" cy="120" r="40"/>
+      <circle cx="65.4" cy="120" r="40"/>
+    </svg>
+
+    <div class="hero-eyebrow">Voice AI · v1.0</div>
+    <h1>A voice that <em>sounds like you,</em> on a phone, this weekend.</h1>
+    <p class="hero-lede">The 5-layer voice-AI stack: listen, think, speak, clone, ship. Each layer is one or two tools, and the whole pipeline ships in a single weekend. No call center. No IVR hell. Just a voice that sounds like you.</p>
+
+    <div class="hero-divider">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 01 · The 5 layers -->
+  <section>
+    <div class="section-kicker">01 · The layers</div>
+    <h2>Five jobs. Twelve tools. One voice that ships.</h2>
+    <p class="section-sub">Every voice-AI app is a sequence of five jobs. Listen (turn audio into text), think (run an LLM on the text), speak (turn the answer into audio), clone (make it sound like you), ship (wire it to a phone).</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-num">1</div>
+        <div>
+          <div class="level-name">Listen · speech-to-text</div>
+          <div class="level-title">Whisper is the floor. MLX Whisper is the no-cloud version.</div>
+          <p class="level-desc">Whisper is fast, multilingual, and runs at the edge via MLX on Apple Silicon. Below 200ms latency for a 5-second utterance, which is fast enough for a phone conversation.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Whisper</span><span class="tool-purpose">— OpenAI's STT</span></span>
+            <span class="tool"><span class="tool-name">MLX Whisper</span><span class="tool-purpose">— on-device STT</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">2</div>
+        <div>
+          <div class="level-name">Think · the brain</div>
+          <div class="level-title">Small, fast, cheap. Latency beats intelligence in real-time.</div>
+          <p class="level-desc">A voice conversation needs sub-second response time. Claude Haiku and GPT-4o-mini both fit. The smart model runs offline for context, the small model runs the live loop.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Claude Haiku</span><span class="tool-purpose">— fast, low-cost</span></span>
+            <span class="tool"><span class="tool-name">GPT-4o-mini</span><span class="tool-purpose">— cheap fallback</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">3</div>
+        <div>
+          <div class="level-name">Speak · text-to-speech</div>
+          <div class="level-title">ElevenLabs for the polish. OpenAI TTS for the cheap fallback.</div>
+          <p class="level-desc">ElevenLabs sets the bar in 2026 — natural inflection, emotional range, multilingual. OpenAI TTS is the budget option for non-critical paths (status updates, scheduled readouts).</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">ElevenLabs</span><span class="tool-purpose">— the polish</span></span>
+            <span class="tool"><span class="tool-name">OpenAI TTS</span><span class="tool-purpose">— the budget</span></span>
+            <span class="tool"><span class="tool-name">PlayHT</span><span class="tool-purpose">— alt voice catalog</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">4</div>
+        <div>
+          <div class="level-name">Clone · your voice</div>
+          <div class="level-title">30 seconds of clean audio is all you need.</div>
+          <p class="level-desc">ElevenLabs Voice Design and Resemble AI both clone from 30 seconds of clean audio. The result is "sounds like you, but more articulate and never tired." Use it sparingly — voice clones that pass 100% of the time also feel uncanny.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">ElevenLabs Voice Design</span><span class="tool-purpose">— instant clone</span></span>
+            <span class="tool"><span class="tool-name">Resemble AI</span><span class="tool-purpose">— pro clone</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level">
+        <div class="level-num">5</div>
+        <div>
+          <div class="level-name">Ship · deploy + channels</div>
+          <div class="level-title">From a Python script to a phone number in 20 minutes.</div>
+          <p class="level-desc">Vapi gives you a phone number + the orchestration layer in one product. LiveKit is the lower-level WebRTC for custom UIs. Twilio is the carrier. Pick the one that matches the build cost you can stomach.</p>
+          <div class="tool-list">
+            <span class="tool"><span class="tool-name">Vapi</span><span class="tool-purpose">— phone + orchestration</span></span>
+            <span class="tool"><span class="tool-name">LiveKit</span><span class="tool-purpose">— WebRTC low-level</span></span>
+            <span class="tool"><span class="tool-name">Twilio</span><span class="tool-purpose">— the carrier</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Why -->
+  <section>
+    <div class="section-kicker">02 · Why</div>
+    <h2>Voice is the next interface. Most voice apps fail.</h2>
+    <p class="section-sub">The 2024-25 wave of "AI call center" products proved you can ship a voice agent. They also proved that 90% of them sound like robots and solve problems nobody has. The win is at the personal scale: a voice that knows you, talks like you, runs on your number.</p>
+
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-node signal"><strong>Signal:</strong> "I want a phone number I can hand to clients" · "I want to read my daily brief in my own voice" · "I want a podcast that runs in my voice" · "I want my voicemail to be handled by a thing that knows me"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Build a personal voice agent. Voice clone yourself (30 seconds of audio). Wire ElevenLabs TTS to your number via Vapi. Set the system prompt to your context (calendar, inbox, recent notes). Total build: a weekend.</div>
+
+        <div class="flow-spacer"></div>
+
+        <div class="flow-node signal"><strong>Signal:</strong> "But I don't want to talk to a robot" · "I want this for my team, not just me" · "The latency is bad" · "I tried this in 2024 and the voice was uncanny"</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-node action"><strong>Action:</strong> Latency is solved — Haiku + streaming TTS is under 600ms end-to-end. Uncanny valley is solved — 2026 voice models pass the "is this a person" test for short utterances. Team-scale needs a persona doc, not a different stack.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · The artifact -->
+  <section>
+    <div class="section-kicker">03 · The artifact</div>
+    <h2>The system prompt for a personal voice agent.</h2>
+    <p class="section-sub">The voice agent is just an LLM with a voice attached. The system prompt is where you encode the persona, the context, the guardrails. The template that works.</p>
+
+<pre><span class="c-mute"># Voice agent system prompt · ~400 words · for Claude Haiku 4.5</span>
+
+<span class="c-key">ROLE</span>
+You are [your name]'s personal voice agent. You answer the phone when
+[your name] can't. You speak in [your name]'s voice, with [your name]'s
+cadence and [your name]'s vocabulary. You are not a generic assistant.
+
+<span class="c-key">WHO YOU TALK TO</span>
+- Clients calling about active projects
+- Vendors calling about quotes / invoices / scheduling
+- Friends calling to make plans
+- Strangers calling the wrong number (be brief, redirect)
+
+<span class="c-key">CONTEXT YOU HAVE</span>
+- Today's calendar (next 8 hours)
+- Last 5 emails sent to this caller (if email matched)
+- 3 most recent project notes (if relevant)
+- [Your name]'s preferences (no calls before 9am, no calls after 8pm,
+  Friday afternoons are deep-work blocks)
+
+<span class="c-key">VOICE RULES</span>
+- Short answers. 1-3 sentences max per turn. This is a phone, not email.
+- No filler ("Sure!", "Of course!", "Great question!"). Start with the substance.
+- If you don't know, say so and offer to take a message.
+- Never invent facts about [your name]'s schedule, projects, or opinions.
+- If asked something outside your context, take a message.
+
+<span class="c-key">GUARDRAILS</span>
+- Never make commitments on [your name]'s behalf (no scheduling, no
+  agreeing to deliverables, no price quotes).
+- Never share contact info, addresses, or financial details.
+- Never engage with harassment — politely end the call and flag.
+- If the caller is in crisis, route to the human immediately.
+
+<span class="c-key">WHEN TO HAND OFF</span>
+- Caller asks for [your name] by name → "They're unavailable right now,
+  want me to take a message or have them call back?"
+- Caller is emotional / upset → "[Your name] is going to call you back
+  personally. When works for you?"
+- Caller asks something the context doesn't cover → take a detailed
+  message, including name, callback number, and a 1-sentence summary.
+
+<span class="c-key">TONE</span>
+Warm. Direct. Not performative. The way a smart friend would answer
+your phone if you were in the shower.</pre>
+  </section>
+
+  <!-- 04 · Worked example -->
+  <section>
+    <div class="section-kicker">04 · In practice</div>
+    <h2>Ship a personal voice agent this weekend.</h2>
+    <p class="section-sub">The worked example: a real build, real tools, real timestamps. Saturday morning to Sunday afternoon, one voice agent on a Vapi number.</p>
+
+    <div class="workex">
+      <div class="workex-side">
+        <h4>The brief · Saturday 9am</h4>
+        <p>Personal voice agent. Answers the phone when I'm unavailable. Cloned voice, calendar context, system prompt above. Vapi number, deployed to a single Twilio DID. Budget: $0 in build cost, $20/mo in runtime.</p>
+      </div>
+      <div class="workex-side">
+        <h4>The build · by Sunday 3pm</h4>
+        <p>ElevenLabs clone (20 min) → Vapi assistant config (90 min) → Twilio number port (10 min) → calendar + email context (3 hours) → 8 test calls (45 min) → deploy (15 min). Total: ~6 hours across the weekend.</p>
+      </div>
+    </div>
+
+<pre><span class="c-mute"># Real build, timestamped</span>
+
+<span class="c-key">Saturday 9:00 — ElevenLabs voice clone</span>
+<span class="c-cmd">Record 90 seconds of clean audio (mic: SM7B, room: closet)</span>
+<span class="c-cmd">ElevenLabs → Instant Voice Clone → wait 60s</span>
+<span class="c-cmd">Test: "What's the weather in Zagreb tomorrow?" in the cloned voice</span>
+<span class="c-cmd">PASS — sounds like me, but more articulate</span>
+
+<span class="c-key">Saturday 10:00 — Vapi assistant config</span>
+<span class="c-cmd">vapi.ai → New Assistant → paste system prompt</span>
+<span class="c-cmd">Model: claude-haiku-4-5 (lowest latency tier)</span>
+<span class="c-cmd">Voice: my ElevenLabs clone ID</span>
+<span class="c-cmd">First message: "Hey, this is Kai's line. He's heads-down right now — </span>
+<span class="c-cmd">               want me to take a message, or can I help with something?"</span>
+<span class="c-cmd">Max duration: 4 min (longer than that, take a message)</span>
+<span class="c-cmd">End-call function: log to /tmp/calls/$(date +%s).json</span>
+
+<span class="c-key">Saturday 11:30 — Twilio number</span>
+<span class="c-cmd">Twilio → Buy a number ($1/mo, local DID)</span>
+<span class="c-cmd">Vapi → Phone Numbers → Import Twilio → paste SID + token</span>
+<span class="c-cmd">Vapi → Route inbound → my assistant</span>
+<span class="c-cmd">Test call from my cell: PASS, agent answers in my voice</span>
+
+<span class="c-key">Saturday 14:00 — Calendar + email context</span>
+<span class="c-cmd">Vapi → Custom Tools → tool_calendar_next_8h (Google Calendar API)</span>
+<span class="c-cmd">Vapi → Custom Tools → tool_recent_emails_to (Gmail API, 5 most recent)</span>
+<span class="c-cmd">Update system prompt: "When asked about schedule, call tool_calendar_next_8h"</span>
+<span class="c-cmd">Test: "Am I free at 3pm Tuesday?" → agent calls tool, answers "Yes, free."</span>
+<span class="c-cmd">PASS</span>
+
+<span class="c-key">Sunday 10:00 — Test matrix (8 calls)</span>
+<span class="c-cmd">Call 1: "Is Kai free Thursday?" → correctly checks calendar → PASS</span>
+<span class="c-cmd">Call 2: "What's the address for the meeting?" → "I'll have him text you" → PASS</span>
+<span class="c-cmd">Call 3: "Can you quote me a price for X?" → "Kai will email you back" → PASS</span>
+<span class="c-cmd">Call 4: hostile caller → polite end, flag → PASS</span>
+<span class="c-cmd">Call 5: caller asks for "Kajica" by name → "He's unavailable, want a msg?" → PASS</span>
+<span class="c-cmd">Call 6: silent caller (3s silence) → "Are you there? — I'll take a msg." → PASS</span>
+<span class="c-cmd">Call 7: wrong number → "This is Kai's line, who were you trying to reach?" → PASS</span>
+<span class="c-cmd">Call 8: friend calling to make plans → "I'm not in Kai's calendar, want a msg?" → PASS</span>
+
+<span class="c-key">Sunday 14:00 — Deploy + monitoring</span>
+<span class="c-cmd">Flip Twilio routing: personal cell → Vapi during focus blocks</span>
+<span class="c-cmd">Daily cron: email me the previous day's call log at 8am</span>
+<span class="c-cmd">Weekly cron: review missed calls, update system prompt if needed</span>
+
+<span class="c-mute">Build cost: $0. Runtime: $19/mo (Vapi) + $1/mo (Twilio) = $20/mo.
+Coverage: 6 focus blocks per week × 4 hours = 24 hours of autonomous phone handling.
+Reclaimed: ~24 hours × 4 (interruption cost) = ~96 hours of deep work per month.</span></pre>
+  </section>
+
+  <!-- 05 · Forks -->
+  <section>
+    <div class="section-kicker">05 · Forking the stack</div>
+    <h2>Same 5 layers, your 12 tools.</h2>
+    <p class="section-sub">The five jobs are universal. The 12 tools are 2026. Swap tools as the field moves; the layer model holds.</p>
+
+    <div class="forks">
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+          Mobile-first (iOS / Android)
+        </div>
+        <div class="fork-desc">Drop Vapi + Twilio. Add LiveKit iOS SDK. Add on-device Whisper via CoreML. The whole loop runs offline once the model is downloaded.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Branded customer support
+        </div>
+        <div class="fork-desc">Add a knowledge base (RAG over your docs). Add function calls for ticket creation, account lookups, refund requests. Drop voice clone — use a polished brand voice.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          Podcast / content
+        </div>
+        <div class="fork-desc">Drop the listen + think layers entirely. Use ElevenLabs Long-Form for the entire episode. Add a script prompt for topic, tone, length. Generate 1 hour for ~$5.</div>
+      </div>
+      <div class="fork">
+        <div class="fork-name">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10"/></svg>
+          Multilingual
+        </div>
+        <div class="fork-desc">ElevenLabs multilingual voices handle EN/ES/FR/DE/IT/PL out of the box. Add per-language system prompts. Whisper large-v3 handles 99 languages for the input.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Voice-AI Stack · v1.0</span>
+    <span class="seq">listen · think · speak · clone · ship</span>
+  </footer>
+</div>
+</body>
+</html>
