@@ -244,7 +244,7 @@
     <p class="section-sub">From "I need to add a config flag" to "PR is up, tests passed, deploy started." Every tool in the stack plays one role. The whole sequence is muscle memory by month two.</p>
 
 <pre><span class="c-mute"># 1. Jump to the project (zoxide remembers frequency)</span>
-<span class="c-cmd">z kai-systems      </span>  <span class="c-mute"># → ~/Documents/NFT-/kai-systems</span>
+<span class="c-cmd">z project-name         </span>  <span class="c-mute"># → jump to the project in 1 keystroke</span>
 
 <span class="c-mute"># 2. Find the file to edit (fzf, no sidebar needed)</span>
 <span class="c-cmd">fzf                </span>  <span class="c-mute"># type a fragment of the name</span>
@@ -277,7 +277,7 @@
     <div class="workex">
       <div class="workex-side">
         <h4>The task · 7:14am</h4>
-        <p>Add a new "dark" theme preset to chaosmagick. The design team sent 3 hex values overnight. Tests, deploy, Slack notification — all autonomous.</p>
+        <p>Add a new "dark" theme preset to a personal project. The design team sent 3 hex values overnight. Tests, deploy, Slack notification — all autonomous.</p>
       </div>
       <div class="workex-side">
         <h4>The tool sequence</h4>
@@ -286,7 +286,7 @@
     </div>
 
 <pre><span class="c-mute"># Real session, timestamped</span>
-<span class="c-cmd">7:14  z chaosmagick                 </span>  <span class="c-mute"># in the project in 1 keystroke</span>
+<span class="c-cmd">7:14  z project-name              </span>  <span class="c-mute"># in the project in 1 keystroke</span>
 <span class="c-cmd">7:15  fzf → src/themes.ts           </span>  <span class="c-mute"># 4 chars typed, file selected</span>
 <span class="c-cmd">7:16  bat src/themes.ts | less     </span>  <span class="c-mute"># scan the existing presets</span>
 <span class="c-cmd">7:18  rg 'ThemePreset' . --type ts  </span>  <span class="c-mute"># find every usage in 80ms</span>

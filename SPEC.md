@@ -256,3 +256,31 @@ Tracked separately from §7 because these are stylistic drift, not count drift. 
 | Hero h1 size | 60px on spokes, 84px on hub | consistent | none — verified |
 
 The next reconciliation PR should pick canonical forms for hub-links and section separator across all 7 spokes. Until then, new spokes should match the closest sibling (twin format for new pipeline-template spokes, terminal format for new five-jobs spokes).
+
+---
+
+## 11. Personal-content hygiene (added 2026-08-03)
+
+The repo is public. Spokes are written in second person with worked examples, but worked examples must not leak the author's real filesystem, real project names, real session counts, or real internal file paths.
+
+**Forbidden in any spoke or the hub:**
+
+- Absolute filesystem paths (`~/Documents/...`, `/Users/...`, `~/sandbox/...`)
+- Real personal-project names used as if they were industry-known tools (replace with generic descriptors)
+- Internal skill/agent/memory file names that aren't part of a documented public convention (e.g. `Grimoire_NotebookLM_Source.md`, `kai-persona`)
+- Full enumerations of the author's repos, sessions, or datasets
+- Counts tied to the author's personal corpus (`456 WJAZD solos`, `30+ session directories`)
+
+**Allowed:**
+
+- Generic file-path patterns that are public conventions in the AI agent / dev tools space (e.g. `memory/user.md`, `memory/agent.md`, `AGENTS.md`, `package.json`, `requirements.txt`)
+- Vendor tool names that are public, well-known products (Suno, ElevenLabs, Suno, fzf, ripgrep, etc.)
+- The author handle (`kajica2`) only in the live-site URL and the `gh repo edit` command — never in spoke prose
+
+**Aspirational framing rule:**
+
+Tone the present tense when describing a system that is being built, not yet operational. Use "designed to", "built to run", "the way an operating system runs its daemons" — not "has already set up", "runs autonomously", "is the meta-layer that makes all the other stacks run themselves".
+
+**Why this matters:**
+
+The drift-rule gate enforces the 8-place lockstep, but it does not enforce personal-content hygiene. That's a review responsibility. The next PR that adds personal-content drift is a candidate to extend `assets/check-links.js` with a personal-content scan — until then, every spoke PR must be hand-reviewed against this section.
