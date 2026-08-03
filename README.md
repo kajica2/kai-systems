@@ -1,6 +1,6 @@
 # Kai Systems
 
-Five production stacks. One philosophy. Zero babysitting.
+Seven production stacks. One philosophy. Zero babysitting.
 
 **→ Live at [kajica2.github.io/kai-systems/](https://kajica2.github.io/kai-systems/)**
 
