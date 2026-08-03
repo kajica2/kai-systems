@@ -1,0 +1,13 @@
+{
+  "name": "kai-systems",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Seven production stacks. One philosophy. Zero babysitting. Static HTML hub + 7 spokes, GitHub Pages.",
+  "scripts": {
+    "check-links": "node assets/check-links.js",
+    "bump-spokes": "node assets/bump-spoke-count.js",
+    "bump-spokes:apply": "node assets/bump-spoke-count.js --apply --yes",
+    "check-pages": "bash assets/check-pages.sh",
+    "verify": "npm run check-links && npm run check-pages"
+  }
+}
