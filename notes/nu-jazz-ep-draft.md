@@ -48,6 +48,18 @@ Open `https://suno.com/playlist/b8be785a-f9c6-4ff7-8fd4-11f7063680c9`, click the
 - Did not actually remove any tracks. Suno playlist edits are irreversible from the UI and require explicit user consent.
 - Did not rename the playlist. Current name `nu-jazz` is descriptive and works.
 - Did not change the order of the kept tracks.
+- Could not auto-start playback — Suno's player requires a user-gesture from the actual page context (browser-use clicks don't satisfy the audio autoplay policy). The 5 song tabs were opened but audio playback has to be started manually.
+
+## How to listen to the 5-track sequence
+
+The fastest path through:
+
+1. Open `https://suno.com/playlist/b8be785a-f9c6-4ff7-8fd4-11f7063680c9` in your browser
+2. Click the playlist's "Play" button (top of the playlist, near the title) — this plays in playlist order
+3. Skip the 16 tracks-to-remove until you reach #1 Horizon Mind (Downtempo opener)
+4. Or: open each song URL above directly and hit the playbar's play button — gives you direct control over the sequence
+
+Once you've listened and approve, do the 16 removals manually via the More options (3-dot) button at the right of each row in the playlist → "Remove from Playlist".
 
 ## Open questions for you
 
