@@ -1,0 +1,45 @@
+name: pages-check
+
+# Drift-rule gate. Runs assets/check-links.js on every push and PR.
+# This is the contract that prevents the five-to-seven bug (commit
+# 85bf9a5) from ever shipping again. If a spoke is added without
+# updating all 8 surface references in SPEC.md §7, this build fails.
+#
+# Triggered on push to main and on every PR. No secrets needed —
+# the script reads public files in the repo. The repo description
+# check is gracefully skipped on PRs (no write access to repo metadata).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    name: Drift-rule gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run drift-rule gate
+        run: node assets/check-links.js
+
+      # On PRs we don't have write access to repo metadata, so the
+      # gh CLI check inside check-links.js will be skipped. On pushes
+      # to main, the workflow token *also* can't read repo metadata
+      # by default — that check is best-effort and skipped here.
+      # To enable the repo-description check, add:
+      #   permissions:
+      #     contents: read
