@@ -1,0 +1,101 @@
+/*
+ * assets/shared.css
+ *
+ * Shared design tokens + page chrome for every page in kai-systems.
+ * Loaded by every index.html in the hub and every spoke.
+ *
+ * Contains:
+ *   - Design tokens (CSS custom properties) — see SPEC.md §2
+ *   - Reset + body base + radial gradient overlay
+ *   - .page container
+ *   - .hub-nav block (used by every spoke; harmless on the hub)
+ *
+ * Per-page styles (hero variants, spoke-specific sections, end-mark,
+ * responsive @media blocks) stay inline in each page's <style> tag.
+ *
+ * This file replaces ~1030 chars of duplicated CSS that previously
+ * appeared verbatim in all 8 HTML files. Future token changes are
+ * one edit, not eight. See SPEC.md §3.
+ */
+
+:root {
+  /* Surfaces */
+  --bg:          #f7f5f0;
+  --bg-warm:     #f4f0e7;
+  --surface:     #ffffff;
+  --line:        #e9e3d6;
+  --line-soft:   #f0eadf;
+
+  /* Ink */
+  --ink:         #14171e;
+  --ink-muted:   #3a4256;
+  --ink-faint:   #7c7a72;
+
+  /* Brand */
+  --primary:     #c97b3f;
+  --primary-soft: rgba(201, 123, 63, 0.08);
+  --primary-mid:  rgba(201, 123, 63, 0.18);
+
+  /* Accent */
+  --accent:      #2f6f5e;
+  --accent-soft: rgba(47, 111, 94, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  font-size: 16px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%),
+    radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 96px 32px 120px;
+}
+
+/* Nav strip — used by every spoke */
+.hub-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 64px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+.hub-nav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.hub-nav a:hover { color: var(--primary); }
+.hub-nav .hub-mark {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--primary);
+  letter-spacing: 0.04em;
+}
+.hub-nav .hub-links { display: flex; gap: 20px; }
+.hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }

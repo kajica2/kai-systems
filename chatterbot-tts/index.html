@@ -5,20 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Voice-AI Stack</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/shared.css">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
 <style>
-  :root { --bg: #f7f5f0; --bg-warm: #f4f0e7; --surface: #ffffff; --line: #e9e3d6; --line-soft: #f0eadf; --ink: #14171e; --ink-muted: #3a4256; --ink-faint: #7c7a72; --primary: #c97b3f; --primary-soft: rgba(201, 123, 63, 0.08); --primary-mid: rgba(201, 123, 63, 0.18); --accent: #2f6f5e; --accent-soft: rgba(47, 111, 94, 0.08); }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 16px; font-weight: 400; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 8% 12%, var(--primary-soft), transparent 38%), radial-gradient(circle at 92% 88%, var(--accent-soft), transparent 42%); pointer-events: none; z-index: 0; }
-  .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 96px 32px 120px; }
-  .hub-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
-  .hub-nav a { color: var(--ink-muted); text-decoration: none; transition: color 0.2s; }
-  .hub-nav a:hover { color: var(--primary); }
-  .hub-nav .hub-mark { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary); letter-spacing: 0.04em; }
-  .hub-nav .hub-links { display: flex; gap: 20px; }
-  .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
   .hero { margin-bottom: 104px; position: relative; }
   .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
   .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
