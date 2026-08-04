@@ -4,6 +4,9 @@ All notable changes to kai-systems. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+### Changed
+- video spoke: refresh Visuals layer for 2026 — drop Pika (no longer the obvious default), add Veo 3.1 (Google), Runway Gen-4.5 (enterprise), Kling 2.x (price/perf), Mochi 1 (open-source Apache 2.0). Midjourney versioned to v6.4. Hub card tool-pill row updated to match.
+
 ## [2026-08-03] — Foundation sprint
 
 ### Added
