@@ -150,11 +150,12 @@
         <div class="level-num">2</div>
         <div>
           <div class="level-name">Composition · MIDI + co-write</div>
-          <div class="level-title">Magenta RealTime 2 runs on your MacBook.</div>
-          <p class="level-desc">RealTime 2 is 2.4B params, on-device via MLX on Apple Silicon, open-weights. MusicVAE gives you the trio / melody continuations. The model is yours, the output is yours, the fork is yours.</p>
+          <div class="level-title">Magenta RealTime (magenta-rt) runs on your MacBook.</div>
+          <p class="level-desc">magenta-rt is 2.4B params, on-device via MLX on Apple Silicon, open-weights. PyPI package `magenta-rt` (latest 2.0.3, 2026). The model is yours, the output is yours, the fork is yours. MusicVAE is the older Python path — the live line is the JS-side `@magenta/music` if you want browser-based trio / melody continuations.</p>
+
           <div class="tool-list">
-            <span class="tool"><span class="tool-name">Magenta RealTime 2</span><span class="tool-purpose">— on-device MIDI</span></span>
-            <span class="tool"><span class="tool-name">MusicVAE</span><span class="tool-purpose">— trio + melody</span></span>
+            <span class="tool"><span class="tool-name">magenta-rt</span><span class="tool-purpose">— on-device MIDI</span></span>
+            <span class="tool"><span class="tool-name">@magenta/music</span><span class="tool-purpose">— trio + melody (JS)</span></span>
           </div>
         </div>
       </div>
@@ -190,10 +191,10 @@
         <div>
           <div class="level-name">Distribution · release + reach</div>
           <div class="level-title">From local bounce to Bandcamp in one click.</div>
-          <p class="level-desc">DistroKid for the streaming distribution. Bandcamp for the indie-owned revenue (Bandcamp Friday is the indie lifeblood). LANDR for the AI mastering that ships the track loud without crushing it.</p>
+          <p class="level-desc">DistroKid for the streaming distribution. Bandcamp for the indie-friendly revenue share (~82% to artist, no DSP gatekeepers). LANDR for the AI mastering that ships the track loud without crushing it.</p>
           <div class="tool-list">
             <span class="tool"><span class="tool-name">DistroKid</span><span class="tool-purpose">— streaming distro</span></span>
-            <span class="tool"><span class="tool-name">Bandcamp</span><span class="tool-purpose">— indie revenue</span></span>
+            <span class="tool"><span class="tool-name">Bandcamp</span><span class="tool-purpose">— ~82% to artist</span></span>
             <span class="tool"><span class="tool-name">LANDR</span><span class="tool-purpose">— AI mastering</span></span>
           </div>
         </div>
@@ -211,13 +212,13 @@
       <div class="flow-row">
         <div class="flow-node signal"><strong>Signal:</strong> "Suno is the fastest path to a vibe demo" · "but my songs sound like Suno" · "what happens when Suno pivots?" · "I want a model that runs offline"</div>
         <div class="flow-arrow">↓</div>
-        <div class="flow-node action"><strong>Action:</strong> Use Suno for what it's good at (fast demos, vibe anchors, lyric scratch tracks). Use Magenta RealTime 2 for the actual production. Suno is a sketch tool. RealTime 2 is the studio tool. The split mirrors Splice vs your own sample library.</div>
+        <div class="flow-node action"><strong>Action:</strong> Use Suno for what it's good at (fast demos, vibe anchors, lyric scratch tracks). Use magenta-rt for the actual production. Suno is a sketch tool. RealTime is the studio tool. The split mirrors Splice vs your own sample library.</div>
 
         <div class="flow-spacer"></div>
 
         <div class="flow-node signal"><strong>Signal:</strong> "I don't have time to learn Magenta" · "the model is too big for my laptop" · "I just want to ship music"</div>
         <div class="flow-arrow">↓</div>
-        <div class="flow-node action"><strong>Action:</strong> The 2.4B-param RealTime 2 fits in unified memory on a base M3 MacBook Pro. No cloud bill, no rate limit, no inference cost per track. The "AI co-writer" becomes a one-time download, not a monthly subscription. That's the rent-vs-own line.</div>
+        <div class="flow-node action"><strong>Action:</strong> The 2.4B-param magenta-rt fits in unified memory on a base M3 MacBook Pro. No cloud bill, no rate limit, no inference cost per track. The "AI co-writer" becomes a one-time download, not a monthly subscription. That's the rent-vs-own line.</div>
       </div>
     </div>
   </section>
@@ -255,7 +256,7 @@
       </div>
       <div class="workex-side">
         <h4>The week, by day</h4>
-        <p>Mon: Suno vibe demos (4 tracks, 2 hours). Tue: Magenta RealTime 2 MIDI foundations. Wed: Ableton arrangement + recording. Thu: Vital sound design + EWI tracking. Fri: LANDR master + Bandcamp release.</p>
+        <p>Mon: Suno vibe demos (4 tracks, 2 hours). Tue: magenta-rt MIDI foundations. Wed: Ableton arrangement + recording. Thu: Vital sound design + EWI tracking. Fri: LANDR master + Bandcamp release.</p>
       </div>
     </div>
 
@@ -266,10 +267,10 @@
 <span class="c-cmd">Export stems (vocals, drums, bass, other) for each winner </span> <span class="c-mute"># Suno Pro tier</span>
 <span class="c-cmd">Drop stems into Ableton for arrangement reference        </span> <span class="c-mute"># mute originals, build over</span>
 
-<span class="c-key"># Tuesday · 6 hours · Magenta RealTime 2 for the foundation</span>
-<span class="c-cmd">MLX launch → load RealTime 2 checkpoint (2.4B params)  </span> <span class="c-mute"># ~10s cold start on M3 Pro</span>
+<span class="c-key"># Tuesday · 6 hours · magenta-rt for the foundation</span>
+<span class="c-cmd">MLX launch → load magenta-rt checkpoint (2.4B params)  </span> <span class="c-mute"># ~10s cold start on M3 Pro</span>
 <span class="c-cmd">Prompt: 16-bar chord progression in F minor, 68 BPM      </span> <span class="c-mute"># MIDI out, copy to Ableton</span>
-<span class="c-cmd">MusicVAE → generate 4 melody variations per track       </span> <span class="c-mute"># pick the one that "feels right"</span>
+<span class="c-cmd">@magenta/music → generate 4 melody variations per track  </span> <span class="c-mute"># pick the one that "feels right"</span>
 
 <span class="c-key"># Wednesday · 8 hours · Ableton arrangement + tracking</span>
 <span class="c-cmd">Ableton Live 12 → arrange MIDI + record EWI solo         </span> <span class="c-mute"># EWI 5000 + breath controller</span>
@@ -283,11 +284,11 @@
 
 <span class="c-key"># Friday · 3 hours · Master + release</span>
 <span class="c-cmd">LANDR mastering → "Loud" preset, -9 LUFS                </span> <span class="c-mute"># $4/mo, ready in 8 minutes</span>
-<span class="c-cmd">Bandcamp → album art + tracklist + $7 price tag          </span> <span class="c-mute"># 100% revenue, no fee on Bandcamp Friday</span>
+<span class="c-cmd">Bandcamp → album art + tracklist + $7 price tag          </span> <span class="c-mute"># ~82% to artist, no DSP gatekeeper</span>
 <span class="c-cmd">DistroKid → schedule streaming for next Friday          </span> <span class="c-mute"># $22.99/yr, all platforms</span>
 
 <span class="c-mute">Total: 25 hours across 5 days. Tool spend: $4 (LANDR) + $0 (everything else).
-Shipped: 4 tracks, 22:14 runtime, 38 pre-orders in week one, 14 on Bandcamp Friday.</span></pre>
+Shipped: 4 tracks, 22:14 runtime, 38 pre-orders in week one, 14 on Friday launch.</span></pre>
   </section>
 
   <!-- 05 · Forks -->
@@ -316,7 +317,7 @@ Shipped: 4 tracks, 22:14 runtime, 38 pre-orders in week one, 14 on Bandcamp Frid
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           Live coding / algorithmic
         </div>
-        <div class="fork-desc">Add TidalCycles or Sonic Pi for the live composition. Add FoxDot for the live-coding pattern layer. RealTime 2 becomes the harmony engine under your code.</div>
+        <div class="fork-desc">Add TidalCycles or Sonic Pi for the live composition. Add FoxDot for the live-coding pattern layer. magenta-rt becomes the harmony engine under your code.</div>
       </div>
       <div class="fork">
         <div class="fork-name">

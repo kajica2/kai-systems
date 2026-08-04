@@ -155,7 +155,8 @@
           <div class="level-title">pYIN Pitch Detection</div>
           <div class="level-desc">For clean trumpet lines — one pitch at a time. pYIN outputs a frequency + confidence per frame at 256-sample hop. Threshold at 0.85 confidence; below that, mark as vibrato, breath, or silence. Output: MIDI note numbers with onset times → MIDI file or LilyPond input.</div>
           <div class="tool-list">
-            <span class="tool"><span class="tool-name">pYIN</span><span class="tool-purpose"> — probabilistic YIN, madmom / librosa</span></span>
+            <span class="tool"><span class="tool-name">librosa.pyin</span><span class="tool-purpose"> — YIN pitch tracking, librosa 0.11</span></span>
+            <span class="tool"><span class="tool-name">madmom</span><span class="tool-purpose"> — legacy YIN, PyPI 0.16.1 (2018)</span></span>
             <span class="tool"><span class="tool-name">librosa</span><span class="tool-purpose"> — display, resampling, beat sync</span></span>
             <span class="tool"><span class="tool-name">MIDI</span><span class="tool-purpose"> — note number + onset + duration</span></span>
           </div>
@@ -167,9 +168,10 @@
         <div>
           <div class="level-name">Rhythm + Form</div>
           <div class="level-title">Beat + Downbeat Tracking</div>
-          <div class="level-desc">For charting the form — where are you in the piece, where are the downbeats, where does the bridge hit. librosa beat tracker + madmom DBN beat tracker running in parallel; the one with higher tap-confidence wins. Output: bar numbers, form labels, and a click-track-aligned MIDI grid.</div>
+          <div class="level-desc">For charting the form — where are you in the piece, where are the downbeats, where does the bridge hit. librosa beat tracker is the active path; madmom DBN runs as a parallel option if you need it. Output: bar numbers, form labels, and a click-track-aligned MIDI grid.</div>
           <div class="tool-list">
-            <span class="tool"><span class="tool-name">madmom DBN</span><span class="tool-purpose"> — double-deep beat tracking</span></span>
+            <span class="tool"><span class="tool-name">librosa beat</span><span class="tool-purpose"> — onset + tempo estimation</span></span>
+            <span class="tool"><span class="tool-name">madmom DBN</span><span class="tool-purpose"> — legacy beat tracker</span></span>
             <span class="tool"><span class="tool-name">librosa beat</span><span class="tool-purpose"> — onset + tempo estimation</span></span>
             <span class="tool"><span class="tool-purpose">bar grid + form labels</span></span>
           </div>
@@ -271,7 +273,8 @@
       <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>librosa.js / pYIN (Web Worker)</span>
       <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Wavesurfer.js (waveform)</span>
       <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>faster-whisper / transformers.js</span>
-      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>madmom DBN beat tracker</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>librosa beat tracker (librosa 0.11)</span>
+      <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>madmom DBN (legacy, 2018)</span>
       <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>VexFlow (notation render)</span>
       <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>LilyPond (PDF export)</span>
       <span class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>MusicXML (MuseScore interop)</span>
