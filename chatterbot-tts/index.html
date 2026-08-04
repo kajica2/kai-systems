@@ -84,6 +84,11 @@
     pre { padding: 20px 18px; font-size: 12px; }
     footer { flex-direction: column; gap: 12px; align-items: flex-start; }
   }
+
+  /* End-mark (added 2026-08-03, hub-spoke parity) */
+  .end-mark { text-align: center; margin: 88px 0 0; padding-top: 48px; border-top: 1px solid var(--line); }
+  .end-mark svg { color: var(--primary); opacity: 0.35; }
+  .end-mark p { font-size: 13px; color: var(--ink-faint); margin-top: 14px; letter-spacing: 0.06em; }
 </style>
 </head>
 <body>
@@ -382,9 +387,13 @@ Reclaimed: ~24 hours × 4 (interruption cost) = ~96 hours of deep work per month
   </section>
 
   <footer>
-    <span>Voice-AI Stack · v1.0</span>
+    <span>Chatterbot Tts · v1.0</span>
     <span class="seq">listen · think · speak · clone · ship</span>
   </footer>
+  <div class="end-mark">
+    <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="16,4 28,11 28,21 16,28 4,21 4,11" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+    <p>Seven stacks. One philosophy. Zero babysitting.</p>
+  </div>
 </div>
 </body>
 </html>

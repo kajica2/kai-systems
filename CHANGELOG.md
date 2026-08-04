@@ -6,6 +6,10 @@ All notable changes to kai-systems. Format follows [Keep a Changelog](https://ke
 
 ### Changed
 - video spoke: refresh Visuals layer for 2026 — drop Pika (no longer the obvious default), add Veo 3.1 (Google), Runway Gen-4.5 (enterprise), Kling 2.x (price/perf), Mochi 1 (open-source Apache 2.0). Midjourney versioned to v6.4. Hub card tool-pill row updated to match.
+- twin, trumpet: hub-links labels lowercased to folder-name (Voice → chatterbot-tts, OS → os, etc.). hub-mark changed to `kai-systems/`. Active marker switched to `<span class="here">` per Format A. Closes SPEC §10 hub-links drift.
+- terminal, os, video, music, chatterbot-tts: end-mark added before `</div>`. The 5 existing `<footer>` blocks replaced with the canonical end-mark (`<div class="end-mark">` + hex SVG + `<p>Seven stacks. One philosophy. Zero babysitting.</p>`). Inline `.end-mark` CSS added to each spoke's `<style>` block. The site now reads as a single series, not 5 short pages + 2 long pages.
+- `assets/check-pages.sh`: end-mark check extended to all 7 spokes (was only trumpet + twin). Header doc and success summary updated.
+- `SPEC.md` §10: reconciliation table updated. The three remaining items (section separator, folder names, hero h1 size) are all intentional and require no further action.
 
 ## [2026-08-03] — Foundation sprint
 

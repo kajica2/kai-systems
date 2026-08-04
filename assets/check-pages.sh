@@ -9,7 +9,7 @@
 #   - Hub hero says "Seven systems" (the drift-rule count)
 #   - shared.css is served (HTTP 200, content-type text/css)
 #   - Each spoke's hub-links lists all N siblings
-#   - Spoke end-marks (only on trumpet, twin) match the count
+#   - Spoke end-marks on ALL N spokes match the count
 #
 # Usage:  ./assets/check-pages.sh
 # Exit:   0 on success, 1 on any live-site drift
@@ -99,15 +99,12 @@ for spoke in "${SPOKES[@]}"; do
     fi
   done
 
-  # End-mark check (only on spokes that have one — terminal, video, music,
-  # chatterbot-tts, os don't; trumpet, twin do — see SPEC.md §10)
-  if [[ "$spoke" == "trumpet" || "$spoke" == "twin" ]]; then
-    if echo "$PAGE" | grep -q "Seven stacks. One philosophy"; then
-      echo "  ok end-mark matches"
-    else
-      echo "  x end-mark drift - expected 'Seven stacks. One philosophy'"
-      FAIL=1
-    fi
+  # End-mark check (all 7 spokes ship one as of 2026-08-03 reconciliation)
+  if echo "$PAGE" | grep -q "Seven stacks. One philosophy"; then
+    echo "  ok end-mark matches"
+  else
+    echo "  x end-mark drift - expected 'Seven stacks. One philosophy'"
+    FAIL=1
   fi
 done
 
@@ -123,4 +120,4 @@ echo "PASS - live deployment matches source."
 echo "  hub:        200, hero says 'Seven systems.'"
 echo "  assets:     shared.css 200, text/css"
 echo "  spokes:     all 7 reachable, hub-links complete"
-echo "  end-marks:  trumpet + twin match"
+echo "  end-marks:  all 7 match"

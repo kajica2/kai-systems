@@ -248,14 +248,16 @@ Until the gate exists, every PR must be hand-verified against the §7 list.
 
 Tracked separately from §7 because these are stylistic drift, not count drift. Future PRs should pick one canonical form.
 
-| Item | Canonical | Drift | Spoke(s) affected |
-|------|-----------|-------|-------------------|
-| Hub-links display label | lowercase | capitalized | twin |
-| Section separator | `·` (five-jobs) or `—` (pipeline) | both used by different spokes | all 7 |
-| Spoke folder names | kebab-case | one is multi-word (`chatterbot-tts`) | chatterbot-tts (intentional) |
+| Item | Canonical | Status | Spoke(s) affected |
+|------|-----------|--------|-------------------|
+| Hub-links display label | lowercase, folder-name | reconciled 2026-08-03 | twin, trumpet (lowercase + Format A applied) |
+| Hub-mark text | `kai-systems/` | reconciled 2026-08-03 | twin, trumpet (`← kai-systems` → `kai-systems/`) |
+| End-mark on every spoke | all 7 ship `<div class="end-mark">` | reconciled 2026-08-03 | terminal, os, video, music, chatterbot-tts (end-mark added, footer replaced) |
+| Section separator | `·` (five-jobs) or `—` (pipeline) | intentional, template-specific | all 7 |
+| Spoke folder names | kebab-case | one is multi-word | chatterbot-tts (intentional) |
 | Hero h1 size | 60px on spokes, 84px on hub | consistent | none — verified |
 
-The next reconciliation PR should pick canonical forms for hub-links and section separator across all 7 spokes. Until then, new spokes should match the closest sibling (twin format for new pipeline-template spokes, terminal format for new five-jobs spokes).
+The next reconciliation PR should pick canonical forms for any residual style drift. Until then, new spokes should match the closest sibling (twin format for new pipeline-template spokes, terminal format for new five-jobs spokes). All spokes now use lowercase folder-name labels and the canonical `<span class="here">` active marker in the hub-links block.
 
 ---
 
