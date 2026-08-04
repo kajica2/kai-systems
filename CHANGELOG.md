@@ -4,6 +4,13 @@ All notable changes to kai-systems. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+### Hygiene (SPEC §11)
+- `os/index.html`: one-line `(expands to $HOME)` footnote added on the first `~/Library/LaunchAgents/` reference. Subsequent occurrences keep the bare `~/` convention per standard Unix documentation.
+- `twin/index.html`: dropped `agent-skills/` and `session-archive/` rows from the AI Agents scan-table (internal agent directory names, not public conventions). Replaced the GitHub row's full repo enumeration (`~30 repos — series site, prompt library, jazz lexicon, ...`) with a generic summary.
+- `twin/index.html`: hero-lede rewritten to "designed to" tense. Was the verbatim SPEC §11 forbidden phrase "the one this series is being built to enable".
+- `index.html`: hub card meta-stack description rewritten to "designed to" tense. Was the verbatim SPEC §11 forbidden phrase "makes all the others run themselves".
+- `./notes/nu-jazz-ep-draft.md`: removed from the repo (moved to `~/Documents/kai-system-notes/`). Personal corpus counts that didn't belong in the public source tree.
+
 ### Changed
 - video spoke: refresh Visuals layer for 2026 — drop Pika (no longer the obvious default), add Veo 3.1 (Google), Runway Gen-4.5 (enterprise), Kling 2.x (price/perf), Mochi 1 (open-source Apache 2.0). Midjourney versioned to v6.4. Hub card tool-pill row updated to match.
 - twin, trumpet: hub-links labels lowercased to folder-name (Voice → chatterbot-tts, OS → os, etc.). hub-mark changed to `kai-systems/`. Active marker switched to `<span class="here">` per Format A. Closes SPEC §10 hub-links drift.

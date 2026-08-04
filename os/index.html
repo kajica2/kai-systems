@@ -231,7 +231,7 @@
   <section>
     <div class="section-kicker">03 · The artifact</div>
     <h2>launchd: cron that survives sleep.</h2>
-    <p class="section-sub">cron on macOS is technically there, but launchd is the right answer. It respects sleep/wake, runs missed jobs on resume, and lives at ~/Library/LaunchAgents/. Three plist files, and your day runs itself.</p>
+    <p class="section-sub">cron on macOS is technically there, but launchd is the right answer. It respects sleep/wake, runs missed jobs on resume, and lives at ~/Library/LaunchAgents/ (the tilde expands to $HOME, the standard Unix convention). Three plist files, and your day runs itself.</p>
 
 <pre><span class="c-mute"># ~/Library/LaunchAgents/com.kai.morning.plist</span>
 <span class="c-key">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
