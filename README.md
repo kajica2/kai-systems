@@ -1,10 +1,10 @@
 # Kai Systems
 
-Seven production stacks. One philosophy. Zero babysitting.
+Eight production stacks. One philosophy. Zero babysitting.
 
 **→ Live at [kajica2.github.io/kai-systems/](https://kajica2.github.io/kai-systems/)**
 
-A series of long-reads on the production stacks that run without a producer. Each spoke names the layers, names the tools, names the worked example. All seven share the same throughline: design once, runs forever.
+A series of long-reads on the production stacks that run without a producer. Each spoke names the layers, names the tools, names the worked example. All eight share the same throughline: design once, runs forever.
 
 ## Stacks
 
@@ -17,6 +17,13 @@ A series of long-reads on the production stacks that run without a producer. Eac
 | [chatterbot-tts](https://kajica2.github.io/kai-systems/chatterbot-tts/) | The Voice-AI Stack — a voice that sounds like you, on a phone, this weekend |
 | [trumpet](https://kajica2.github.io/kai-systems/trumpet/) | The Trumpet Transcription Stack — cut up live recordings, transcribe, chart |
 | [twin](https://kajica2.github.io/kai-systems/twin/) | The Cognitive Twin — scan the filesystem, index tools, run the work processes autonomously |
+
+| [kai-art](https://kajica2.github.io/kai-systems/kai-art/) | The Living Art Stack — filaments, sand, attractors, birth charts driven by ... |
+
+
+## Brand history
+
+LUMINARA / sovereign-futurism was a previous brand identity. As of 2026-08-26 it has been sunset; the LUMINARA repos (`luminara-*`, `biometric-arsenal`, `arsenal-promo-*`, `binary-ring-credits-system`, `sovereign-universe`) have been archived. The only survivor — `shader-arsenal` — lives on as part of the video spoke.
 
 ## How this repo works
 
