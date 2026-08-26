@@ -20,7 +20,7 @@ kai-systems/
 
 **One spoke = one folder + one `index.html`.** No build step, no framework, no JS framework. Every spoke is a static HTML page that runs anywhere a browser runs.
 
-**Current spokes** (7): `video/`, `music/`, `chatterbot-tts/`, `os/`, `terminal/`, `trumpet/`, `twin/`
+**Current spokes** (8): `video/`, `kai-art/`, `music/`, `chatterbot-tts/`, `os/`, `terminal/`, `trumpet/`, `twin/`
 
 When a spoke is added, the count `N` changes. **Every reference to "N spokes/systems" must be updated in lockstep** (see §7 — The Drift Rule).
 
@@ -122,9 +122,9 @@ The hub is not a spoke. It is the index. Structure:
 
 1. **Hero block** — eyebrow (`kai-systems · series 01`), h1, hero-lede, divider
 2. **Intro** — 2 paragraphs
-3. **Index section** — kicker + 7 cards (one per spoke), each is an `<a href="<spoke>/index.html">` with a `card-num` (01–07), eyebrow, title, desc, tool list, and an arrow SVG
+3. **Index section** — kicker + 8 cards (one per spoke), each is an `<a href="<spoke>/index.html">` with a `card-num` (01–08), eyebrow, title, desc, tool list, and an arrow SVG
 4. **Throughline** — explains the shared structure
-5. **Footer** — `kai-systems · series 01 · 7 of 7` + `design once · runs forever`
+5. **Footer** — `kai-systems · series 01 · 8 of 8` + `design once · runs forever`
 
 The hero h1 must read **"N systems. One philosophy. Zero babysitting."** where N = current spoke count.
 
