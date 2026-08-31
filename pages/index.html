@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use GitHub Pages</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/shared.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,4 28,11 28,21 16,28 4,21 4,11' fill='none' stroke='%23c97b3f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c97b3f'/%3E%3C/svg%3E">
+<style>
+  /* Hero */
+  .hero { margin-bottom: 104px; position: relative; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero-eyebrow::before { content: ""; display: inline-block; width: 24px; height: 1px; background: var(--primary); }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 60px; line-height: 1.04; font-weight: 400; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 28px; max-width: 760px; }
+  .hero h1 em { font-style: italic; color: var(--primary); }
+  .hero-lede { font-size: 21px; line-height: 1.5; color: var(--ink-muted); max-width: 640px; font-weight: 400; }
+  .hero-divider { margin-top: 56px; display: flex; align-items: center; gap: 18px; }
+  .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .hero-divider svg { color: var(--primary); }
+  .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
+  .geom-tr { top: -40px; right: -80px; width: 320px; height: 320px; }
+
+  /* Sections */
+  section { margin-bottom: 104px; }
+  .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+
+  /* Step list */
+  .steps { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .step { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; }
+  .step:last-child { border-bottom: none; }
+  .step:hover { background: var(--primary-soft); }
+  .step-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .step-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  .step-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
+  .step-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 620px; }
+
+  /* Code blocks */
+  .code { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--bg-warm); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 14px 0; overflow-x: auto; white-space: pre; color: var(--ink); }
+  .code .cmd { color: var(--primary); }
+  .code .arg { color: var(--accent); }
+  .code .com { color: var(--ink-faint); }
+  .code .url { color: var(--ink-muted); text-decoration: underline; text-decoration-color: var(--line); }
+
+  /* Tip block */
+  .tip { border-left: 3px solid var(--primary); background: var(--primary-soft); border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 24px 0; }
+  .tip-label { font-size: 11px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+  .tip p { font-size: 15px; color: var(--ink); line-height: 1.55; margin: 0; }
+
+  /* Table */
+  .config-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 14px; }
+  .config-table th { background: var(--bg-warm); padding: 14px 18px; text-align: left; font-size: 11px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .config-table td { padding: 14px 18px; border-bottom: 1px solid var(--line); color: var(--ink-muted); vertical-align: top; }
+  .config-table tr:last-child td { border-bottom: none; }
+  .config-table tr:hover td { background: var(--primary-soft); }
+  .config-table code { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--primary); }
+
+  /* Tool list */
+  .tool-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--ink); }
+
+  /* Footer */
+  footer { display: flex; justify-content: space-between; align-items: center; padding: 32px 0; margin-top: 64px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); }
+  footer .seq { font-family: 'JetBrains Mono', monospace; }
+
+  /* End-mark */
+  .end-mark { text-align: center; margin: 88px 0 0; padding-top: 48px; border-top: 1px solid var(--line); }
+  .end-mark svg { color: var(--primary); opacity: 0.35; }
+  .end-mark p { font-size: 13px; color: var(--ink-faint); margin-top: 14px; letter-spacing: 0.06em; }
+
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 44px; }
+    section h2 { font-size: 32px; }
+    .step { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
+    .step-num { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="hub-nav">
+  <a href="../index.html" class="hub-mark">kai-systems/</a>
+  <div class="hub-links">
+    <a href="../video/index.html">video</a>
+    <a href="../music/index.html">music</a>
+    <a href="../chatterbot-tts/index.html">chatterbot-tts</a>
+    <a href="../os/index.html">os</a>
+    <a href="../terminal/index.html">terminal</a>
+    <a href="../trumpet/index.html">trumpet</a>
+    <a href="../twin/index.html">twin</a>
+    <a href="../kai-art/index.html">kai-art</a>
+    <span class="here">pages</span>
+  </div>
+</nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Web hosting</div>
+    <svg class="geom geom-tr" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1">
+      <polygon points="100,10 190,55 190,145 100,190 10,145 10,55"/>
+      <polygon points="100,40 162,75 162,125 100,160 38,125 38,75"/>
+      <circle cx="100" cy="100" r="22" fill="currentColor" fill-opacity="0.15"/>
+    </svg>
+    <h1>How to use <em>GitHub Pages.</em></h1>
+    <p class="hero-lede">Push to main. Site goes live in 60 seconds. No build step, no Netlify, no Vercel, no DNS, no server. Just a static folder named <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">/docs</code> or a branch called <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">gh-pages</code> and a one-click toggle in repo settings.</p>
+
+    <div class="hero-divider">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12,2 21,7 21,17 12,22 3,17 3,7"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 01 · THE LAYERS -->
+  <section>
+    <div class="section-kicker">01 · The layers</div>
+    <h2>What you're actually deploying.</h2>
+    <p class="section-sub">GitHub Pages is a static-file CDN attached to a public repo. There's no runtime, no server-side code, no database. The whole service is "we'll serve whatever's in this folder over HTTPS with a green lock and a free cert." That's the whole product.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">L1</div>
+        <div>
+          <div class="step-name">Source</div>
+          <div class="step-title">A repo on GitHub</div>
+          <div class="step-desc">Public. Free for personal accounts. Pages is off by default — you turn it on once in repo Settings → Pages. After that, every push to the selected branch triggers a deploy.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">L2</div>
+        <div>
+          <div class="step-name">Build</div>
+          <div class="step-title">A static folder of files</div>
+          <div class="step-desc">HTML, CSS, JS, images, fonts, anything that doesn't need a server. The whole content of your site is just files in a folder. For a single-page doc site like this one, that's <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">index.html</code> plus an <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">assets/</code> dir.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">L3</div>
+        <div>
+          <div class="step-name">CDN</div>
+          <div class="step-title">GitHub's edge cache</div>
+          <div class="step-desc">Pages is served from a global CDN. Files are cached aggressively at the edge. The first request after a deploy takes a beat; every request after that is a cache hit. There's no warm-up script, no origin shield, no config to set.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">L4</div>
+        <div>
+          <div class="step-name">DNS</div>
+          <div class="step-title">A subdomain at github.io</div>
+          <div class="step-desc">By default your site lives at <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">&lt;username&gt;.github.io/&lt;repo&gt;/</code>. Custom domains work — point an A record at GitHub's four IPs (185.199.108.153, .154, .155, .156) or a CNAME at <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">&lt;username&gt;.github.io</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">L5</div>
+        <div>
+          <div class="step-name">TLS</div>
+          <div class="step-title">Free HTTPS, automatic renewal</div>
+          <div class="step-desc">Let's Encrypt certificate, provisioned and renewed by GitHub. No config, no <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">certbot</code>, no cron. Add a custom domain and the cert shows up within minutes.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · WHY -->
+  <section>
+    <div class="section-kicker">02 · Why</div>
+    <h2>Why Pages wins for this kind of site.</h2>
+    <p class="section-sub">If your content is a doc, a portfolio, a landing page, a marketing site, a research notebook, or a blog with no comments — Pages is the right tool. It's not the right tool for SPAs that need server-side routing, dashboards with auth, or anything that needs a database.</p>
+
+    <table class="config-table">
+      <thead>
+        <tr><th>What you want</th><th>Pages?</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Doc / long-read / portfolio</td><td><code>yes</code></td><td>Static files, low traffic, free hosting, free CDN.</td></tr>
+        <tr><td>Marketing / landing page</td><td><code>yes</code></td><td>Same. Pages is designed for this shape.</td></tr>
+        <tr><td>Personal blog (no comments)</td><td><code>yes</code></td><td>Markdown → static HTML via a build step on push, or just commit HTML.</td></tr>
+        <tr><td>Project hub with multiple sections</td><td><code>yes</code></td><td>Each section gets its own folder and <code>index.html</code>. That is this site.</td></tr>
+        <tr><td>Web app with user accounts</td><td><code>no</code></td><td>You need server-side auth. Pages can't run it.</td></tr>
+        <tr><td>SPA with client-side routing</td><td><code>mixed</code></td><td>Pages serves the SPA shell fine, but 404s on deep links. Add a 404.html that redirects, or use HashRouter.</td></tr>
+        <tr><td>Anything with a database</td><td><code>no</code></td><td>Pages has no runtime. Use Render, Fly, Railway, or a managed DB + Pages frontend.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      <div class="tip-label">The 60-second rule</div>
+      <p>Push a single HTML file. Open <code>Settings → Pages</code>. Pick the branch. Wait 60 seconds. Your site is live on the public internet with HTTPS. That's the whole flow. If your stack needs more than that to go from "files on disk" to "live URL," your stack has too much ceremony.</p>
+    </div>
+  </section>
+
+  <!-- 03 · THE ARTIFACT -->
+  <section>
+    <div class="section-kicker">03 · The artifact</div>
+    <h2>This site, in five files.</h2>
+    <p class="section-sub">The page you're reading right now is a single static HTML file. The whole kai-systems hub is 9 such files plus one shared CSS. The "build" is a typo for "git commit." Here's the actual layout on disk:</p>
+
+    <div class="code"><span class="com"># A repo named "kai-systems" on GitHub</span>
+kai-systems/
+├── <span class="arg">index.html</span>              <span class="com">← the hub</span>
+├── <span class="arg">SPEC.md</span>                 <span class="com">← the contract</span>
+├── <span class="arg">README.md</span>               <span class="com">← the discoverability</span>
+├── <span class="arg">assets/</span>
+│   └── <span class="arg">shared.css</span>          <span class="com">← tokens + reset + nav</span>
+├── <span class="arg">video/</span>
+│   └── <span class="arg">index.html</span>          <span class="com">← spoke 01</span>
+├── <span class="arg">music/</span>
+│   └── <span class="arg">index.html</span>
+├── <span class="arg">terminal/</span>
+│   └── <span class="arg">index.html</span>
+└── <span class="arg">pages/</span>                 <span class="com">← you are here</span>
+    └── <span class="arg">index.html</span></div>
+
+    <p style="font-size:16px;color:var(--ink-muted);max-width:680px;margin:24px 0 0;">No <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">package.json</code> in the runtime path. No <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">node_modules</code>. No bundler. The CSS lives in one file. Each page has its own inline <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">&lt;style&gt;</code> for the hero and the section layouts, but everything inherited (tokens, body base, nav strip, fonts) comes from <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">assets/shared.css</code>.</p>
+  </section>
+
+  <!-- 04 · IN PRACTICE -->
+  <section>
+    <div class="section-kicker">04 · In practice</div>
+    <h2>The seven-step deploy.</h2>
+    <p class="section-sub">From an empty GitHub account to a live site. The full ceremony, top to bottom, with the exact commands and the exact screens.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">S1</div>
+        <div>
+          <div class="step-name">Create the repo</div>
+          <div class="step-title">On github.com/new</div>
+          <div class="step-desc">Public, name it whatever your URL will be. The repo name becomes the path: <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">kai-systems</code> lives at <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">/kai-systems/</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">S2</div>
+        <div>
+          <div class="step-name">Local</div>
+          <div class="step-title">Clone, add a file, commit</div>
+          <div class="step-desc">The whole "build" is the file system:</div>
+          <div class="code"><span class="cmd">git</span> clone git@github.com:kajica2/kai-systems.git
+<span class="cmd">cd</span> kai-systems
+<span class="cmd">echo</span> <span class="arg">'&lt;h1&gt;hello&lt;/h1&gt;'</span> &gt; index.html
+<span class="cmd">git</span> add . &amp;&amp; <span class="cmd">git</span> commit -m <span class="arg">"initial"</span>
+<span class="cmd">git</span> push</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">S3</div>
+        <div>
+          <div class="step-name">Settings</div>
+          <div class="step-title">Turn on Pages</div>
+          <div class="step-desc">Repo → <strong>Settings</strong> → <strong>Pages</strong>. Under "Build and deployment", Source: <strong>Deploy from a branch</strong>. Branch: <strong>main</strong>, folder: <strong>/ (root)</strong>. Save.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">S4</div>
+        <div>
+          <div class="step-name">Wait</div>
+          <div class="step-title">60 seconds, sometimes less</div>
+          <div class="step-desc">A workflow runs in the Actions tab. It copies the branch into a Pages bucket. Refresh the Settings → Pages screen and you'll see "Your site is live at <span class="url">https://kajica2.github.io/kai-systems/</span>".</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">S5</div>
+        <div>
+          <div class="step-name">Iterate</div>
+          <div class="step-title">Push → live</div>
+          <div class="step-desc">Every commit to main triggers a new deploy. There's no "publish" button. The whole edit-checkpoint is <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">git push</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">S6</div>
+        <div>
+          <div class="step-name">Custom domain</div>
+          <div class="step-title">Optional</div>
+          <div class="step-desc">Add a file called <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">CNAME</code> at the repo root containing your domain (one line, no protocol). At your DNS provider, add either four A records pointing to GitHub's IPs or one CNAME pointing to <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">kajica2.github.io</code>. The cert shows up within 15 minutes.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">S7</div>
+        <div>
+          <div class="step-name">Custom 404</div>
+          <div class="step-title">Add a 404.html at the root</div>
+          <div class="step-desc">Pages serves this for any missing path. Use it to redirect users back to the hub, or to render a styled not-found page that matches your design.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-label">Site settings, where to find them</div>
+      <p>After the first deploy, every site-level setting (custom domain, HTTPS enforcement, custom 404, build branch) lives at <strong>Settings → Pages</strong>. Everything repo-level (visibility, collaborators, branches, Actions permissions) is in the same Settings page but other tabs. The split is intentional: Pages settings are about serving, repo settings are about the source.</p>
+    </div>
+  </section>
+
+  <!-- 05 · FORKING -->
+  <section>
+    <div class="section-kicker">05 · Forking the stack</div>
+    <h2>Adopting this for your own project.</h2>
+    <p class="section-sub">Three forks that make sense, ordered from smallest to largest. Pick the shape that matches what you're actually shipping.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">F1</div>
+        <div>
+          <div class="step-name">Single page</div>
+          <div class="step-title">A landing page</div>
+          <div class="step-desc">One <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">index.html</code> with inline styles. No <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">assets/</code> dir at all. Pages serves it directly. The whole site is one URL.</div>
+          <div class="tool-list">
+            <span class="tool">portfolio</span>
+            <span class="tool">product launch</span>
+            <span class="tool">event page</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">F2</div>
+        <div>
+          <div class="step-name">Hub + sections</div>
+          <div class="step-title">Multi-section docs</div>
+          <div class="step-desc">This fork. A hub at the root, one folder per section, a shared CSS. Each section is a static page that links to its siblings via a top nav. No router, no client-side state. The structure is the URL.</div>
+          <div class="tool-list">
+            <span class="tool">documentation</span>
+            <span class="tool">research notebook</span>
+            <span class="tool">project hub</span>
+            <span class="tool">brand site</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">F3</div>
+        <div>
+          <div class="step-name">Markdown source</div>
+          <div class="step-title">Blog with build step</div>
+          <div class="step-desc">Source files in <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">/src</code> are markdown. A GitHub Action runs a static site generator (Jekyll is built-in, or Hugo / Eleventy via community actions) and pushes the rendered HTML to <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">main</code> or <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;background:var(--bg-warm);padding:2px 6px;border-radius:4px;">gh-pages</code>. Pages serves the output, not the source.</div>
+          <div class="tool-list">
+            <span class="tool">personal blog</span>
+            <span class="tool">changelog</span>
+            <span class="tool">release notes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-label">Branch strategy</div>
+      <p>For most projects, serve from <strong>main</strong> and commit rendered output directly. If you have a heavy build that runs on every push, serve from a separate <strong>gh-pages</strong> branch — the source stays on <code>main</code>, the build action pushes artifacts to <code>gh-pages</code>, and Pages only watches the artifacts branch. This is how Jekyll-powered GitHub Pages works by default and it keeps the build noise out of the source history.</p>
+    </div>
+
+    <div class="tip">
+      <div class="tip-label">When NOT to fork this</div>
+      <p>If you need server-side rendering for SEO of dynamic routes, or you need auth, or you need a database, or you need server-side form handlers — Pages is the wrong tool. Don't fight it. Use Vercel or Render for Next.js, Fly or Railway for full-stack Node/Python, or Cloudflare Pages for serverless functions. Each of those is also free-tier and one-click deploy. Pages is for files. Use the right tool.</p>
+    </div>
+
+    <div class="tool-list">
+      <span class="tool">git</span>
+      <span class="tool">GitHub.com</span>
+      <span class="tool">a text editor</span>
+      <span class="tool">a domain name (optional)</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>Pages · v1.0</span>
+    <span class="seq">7 steps · 0 servers · 0 build minutes</span>
+  </footer>
+  <div class="end-mark">
+    <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="16,4 28,11 28,21 16,28 4,21 4,11" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
+    <p>Nine stacks. One philosophy. Zero babysitting.</p>
+  </div>
+</div>
+</body>
+</html>

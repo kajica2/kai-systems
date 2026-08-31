@@ -1,10 +1,10 @@
 # Kai Systems
 
-Eight production stacks. One philosophy. Zero babysitting.
+Nine production stacks. One philosophy. Zero babysitting.
 
 **→ Live at [kajica2.github.io/kai-systems/](https://kajica2.github.io/kai-systems/)**
 
-A series of long-reads on the production stacks that run without a producer. Each spoke names the layers, names the tools, names the worked example. All eight share the same throughline: design once, runs forever.
+A series of long-reads on the production stacks that run without a producer. Each spoke names the layers, names the tools, names the worked example. All nine share the same throughline: design once, runs forever.
 
 ## Stacks
 
@@ -20,6 +20,7 @@ A series of long-reads on the production stacks that run without a producer. Eac
 
 | [kai-art](https://kajica2.github.io/kai-systems/kai-art/) | The Living Art Stack — filaments, sand, attractors, birth charts driven by ... |
 
+| [pages](https://kajica2.github.io/kai-systems/pages/) | How to use GitHub Pages — push to main, site goes live in 60s, no build, no server |
 
 ## Brand history
 
