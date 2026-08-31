@@ -6,7 +6,7 @@
 #
 # Checks:
 #   - Every page returns HTTP 200
-#   - Hub hero says "Eight systems" (the drift-rule count)
+#   - Hub hero says "Nine systems" (the drift-rule count)
 #   - shared.css is served (HTTP 200, content-type text/css)
 #   - Each spoke's hub-links lists all N siblings
 #   - Spoke end-marks on ALL N spokes match the count
@@ -22,7 +22,7 @@
 set -euo pipefail
 
 BASE="https://kajica2.github.io/kai-systems"
-SPOKES=(terminal os video music chatterbot-tts trumpet twin kai-art)
+SPOKES=(terminal os video music chatterbot-tts trumpet twin kai-art pages)
 FAIL=0
 
 # Cache the page body for a spoke (one curl per spoke).
@@ -57,10 +57,10 @@ else
 fi
 
 HUB_BODY=$(fetch_page "")
-if echo "$HUB_BODY" | grep -q "<h1>Eight systems\."; then
-  echo "  ok hero says 'Eight systems.'"
+if echo "$HUB_BODY" | grep -q "<h1>Nine systems\."; then
+  echo "  ok hero says 'Nine systems.'"
 else
-  echo "  x hero drift - did not find '<h1>Eight systems.'"
+  echo "  x hero drift - did not find '<h1>Nine systems.'"
   FAIL=1
 fi
 
@@ -99,11 +99,11 @@ for spoke in "${SPOKES[@]}"; do
     fi
   done
 
-  # End-mark check (all 8 spokes ship one as of 2026-08-26 kai-art addition)
-  if echo "$PAGE" | grep -q "Eight stacks. One philosophy"; then
+  # End-mark check (all 9 spokes ship one as of 2026-08-31 pages addition)
+  if echo "$PAGE" | grep -q "Nine stacks. One philosophy"; then
     echo "  ok end-mark matches"
   else
-    echo "  x end-mark drift - expected 'Eight stacks. One philosophy'"
+    echo "  x end-mark drift - expected 'Nine stacks. One philosophy'"
     FAIL=1
   fi
 done
@@ -117,7 +117,7 @@ if [ "$FAIL" -ne 0 ]; then
 fi
 
 echo "PASS - live deployment matches source."
-echo "  hub:        200, hero says 'Eight systems.'"
+echo "  hub:        200, hero says 'Nine systems.'"
 echo "  assets:     shared.css 200, text/css"
-echo "  spokes:     all 8 reachable, hub-links complete"
-echo "  end-marks:  all 8 match"
+echo "  spokes:     all 9 reachable, hub-links complete"
+echo "  end-marks:  all 9 match"
