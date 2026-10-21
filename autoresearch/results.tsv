@@ -1,0 +1,7 @@
+commit	proto	metric	status	description
+baseline	-	6347px	keep	initial shipping version (commit 6900cc7) — 7300 chars of copy
+16c5955	a-e	-	keep	round 1 — 5 layout prototypes behind tabs; drift gate PASS, 0 console errors, no hardcoded colors
+16c5955	e	1749px / 1569 chars	discard	accordion — collapses 73% of the copy behind clicks; conflicts with SPEC §6 long-read
+16c5955	b	7139px	discard	two-column w/ TOC — tallest of the five; a 240px rail no sibling spoke has
+16c5955	c	6331px	discard	card grid — no sibling spoke uses cards; the pages spoke would read as a different product
+f148bfc	d	5046px	keep	round 2 — D wins: same 7300 chars, 20% less page, and the only variant that stays inside the series' single-column language

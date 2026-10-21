@@ -21,38 +21,42 @@
   .geom { position: absolute; pointer-events: none; color: var(--primary); opacity: 0.07; }
   .geom-tr { top: -40px; right: -80px; width: 320px; height: 320px; }
 
+  /* Content measure — a 720px column keeps the line length readable
+     while the dense type scale pulls the whole read upward. */
+  .read { max-width: 720px; }
+
   /* Sections */
-  section { margin-bottom: 104px; }
+  section { margin-bottom: 56px; }
   .section-kicker { font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
-  section h2 { font-family: 'DM Serif Display', serif; font-size: 40px; line-height: 1.12; font-weight: 400; margin-bottom: 16px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
-  .section-sub { font-size: 18px; line-height: 1.55; color: var(--ink-muted); max-width: 640px; margin-bottom: 44px; }
+  section h2 { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1.15; font-weight: 400; margin-bottom: 8px; color: var(--ink); letter-spacing: -0.01em; max-width: 720px; }
+  .section-sub { font-size: 15px; line-height: 1.45; color: var(--ink-muted); max-width: 640px; margin-bottom: 24px; }
 
   /* Step list */
   .steps { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
-  .step { display: grid; grid-template-columns: 80px 1fr; gap: 28px; padding: 32px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; }
+  .step { display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 18px 20px; border-bottom: 1px solid var(--line); transition: background 0.25s ease; }
   .step:last-child { border-bottom: none; }
   .step:hover { background: var(--primary-soft); }
-  .step-num { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--primary); opacity: 0.45; }
+  .step-num { font-family: 'DM Serif Display', serif; font-size: 36px; line-height: 1; color: var(--primary); opacity: 0.45; }
   .step-name { font-size: 12px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
-  .step-title { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.005em; }
-  .step-desc { font-size: 15px; color: var(--ink-muted); line-height: 1.55; max-width: 620px; }
+  .step-title { font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.005em; }
+  .step-desc { font-size: 14px; color: var(--ink-muted); line-height: 1.5; max-width: 620px; }
 
   /* Code blocks */
-  .code { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--bg-warm); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 14px 0; overflow-x: auto; white-space: pre; color: var(--ink); }
+  .code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg-warm); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 14px 0; overflow-x: auto; white-space: pre; color: var(--ink); }
   .code .cmd { color: var(--primary); }
   .code .arg { color: var(--accent); }
   .code .com { color: var(--ink-faint); }
   .code .url { color: var(--ink-muted); text-decoration: underline; text-decoration-color: var(--line); }
 
   /* Tip block */
-  .tip { border-left: 3px solid var(--primary); background: var(--primary-soft); border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 24px 0; }
+  .tip { border-left: 3px solid var(--primary); background: var(--primary-soft); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 24px 0; }
   .tip-label { font-size: 11px; font-weight: 600; color: var(--primary); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
-  .tip p { font-size: 15px; color: var(--ink); line-height: 1.55; margin: 0; }
+  .tip p { font-size: 14px; color: var(--ink); line-height: 1.5; margin: 0; }
 
   /* Table */
-  .config-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 14px; }
-  .config-table th { background: var(--bg-warm); padding: 14px 18px; text-align: left; font-size: 11px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
-  .config-table td { padding: 14px 18px; border-bottom: 1px solid var(--line); color: var(--ink-muted); vertical-align: top; }
+  .config-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 13px; }
+  .config-table th { background: var(--bg-warm); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .config-table td { padding: 10px 14px; border-bottom: 1px solid var(--line); color: var(--ink-muted); vertical-align: top; }
   .config-table tr:last-child td { border-bottom: none; }
   .config-table tr:hover td { background: var(--primary-soft); }
   .config-table code { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--primary); }
@@ -66,15 +70,18 @@
   footer .seq { font-family: 'JetBrains Mono', monospace; }
 
   /* End-mark */
-  .end-mark { text-align: center; margin: 88px 0 0; padding-top: 48px; border-top: 1px solid var(--line); }
+  .end-mark { text-align: center; margin: 56px 0 0; padding-top: 32px; border-top: 1px solid var(--line); }
   .end-mark svg { color: var(--primary); opacity: 0.35; }
   .end-mark p { font-size: 13px; color: var(--ink-faint); margin-top: 14px; letter-spacing: 0.06em; }
 
-  @media (max-width: 720px) {
+  @media (max-width: 768px) {
     .hero h1 { font-size: 44px; }
-    section h2 { font-size: 32px; }
-    .step { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
-    .step-num { font-size: 40px; }
+    .geom-tr { display: none; }
+    section h2 { font-size: 26px; }
+    .step { grid-template-columns: 1fr; gap: 10px; padding: 16px 18px; }
+    .step-num { font-size: 30px; }
+    .config-table { font-size: 12px; }
+    .config-table th, .config-table td { padding: 8px 10px; }
   }
 </style>
 </head>
@@ -115,7 +122,11 @@
     </div>
   </div>
 
-  <!-- 01 · THE LAYERS -->
+  
+
+  <div class="read">
+
+<!-- 01 · THE LAYERS -->
   <section>
     <div class="section-kicker">01 · The layers</div>
     <h2>What you're actually deploying.</h2>
@@ -359,6 +370,7 @@ kai-systems/
       <span class="tool">a domain name (optional)</span>
     </div>
   </section>
+  </div>
 
   <footer>
     <span>Pages · v1.0</span>

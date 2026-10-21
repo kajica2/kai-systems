@@ -74,6 +74,11 @@
     .level-num { font-size: 36px; }
     .page { padding: 64px 20px 80px; }
   }
+  /* The hero geometry sits outside the page box and widens the document on a
+     narrow viewport. Hide it before that happens. */
+  @media (max-width: 768px) {
+    .geom-tr { display: none; }
+  }
 </style>
 </head>
 <body>
