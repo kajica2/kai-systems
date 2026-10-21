@@ -97,5 +97,14 @@ body::before {
   color: var(--primary);
   letter-spacing: 0.04em;
 }
-.hub-nav .hub-links { display: flex; gap: 20px; }
+.hub-nav .hub-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
 .hub-nav .hub-links .here { color: var(--primary); font-weight: 500; }
+
+/* Nine sibling links do not fit one row on a phone. The nav stacks and the
+   links wrap instead of pushing the page wider than the viewport. This used
+   to be repeated inline in four spokes; it lives here so every spoke — the
+   twin and the pages spoke included — gets it from one place. */
+@media (max-width: 768px) {
+  .hub-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .hub-nav .hub-links { gap: 12px; justify-content: flex-start; }
+}
